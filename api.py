@@ -103,53 +103,43 @@ def login():
         password = request.form.get('password')
         submit_type = request.form.get('submit')
 
+        resp = make_response()
+
+        # login, auth user then return token if ok
         if submit_type == "login":
             authenticated = authenticate_user(username, password)
 
-            # spit out token to use as user
-            token = secrets.token_urlsafe(24)
+            if not authenticated:
+                resp = make_response(json.dumps(
+                    {"Message": "Authentication Failed", "authenticated": authenticated}), 401)
+            else:
+                # spit out token to use as user
+                token = secrets.token_urlsafe(24)
 
-            resp = make_response(json.dumps(
-                {"token": token, "authenticated": authenticated}), 200)
-            resp.headers['Content-Type'] = 'application/json'
-            resp.headers.add('Access-Control-Allow-Origin', '*')
-            resp.headers.add('Access-Control-Allow-Headers',
-                             'Content-Type,Authorization')
-            resp.headers.add('Access-Control-Allow-Methods',
-                             'GET,PUT,POST,DELETE,OPTIONS')
+                resp = make_response(json.dumps(
+                    {"Token": token, "Authenticated": authenticated}), 200)
 
-            return resp
-
+        # create new user if not exist
         elif submit_type == 'signup':
 
             if not user_exists(username):
 
                 create_user(username, password)
 
-                # spit out token to use as user
-                token = secrets.token_urlsafe(24)
-
                 resp = make_response(json.dumps(
-                    {"token": token, "authenticated": authenticated}), 200)
-                resp.headers['Content-Type'] = 'application/json'
-                resp.headers.add('Access-Control-Allow-Origin', '*')
-                resp.headers.add('Access-Control-Allow-Headers',
-                                 'Content-Type,Authorization')
-                resp.headers.add('Access-Control-Allow-Methods',
-                                 'GET,PUT,POST,DELETE,OPTIONS')
-
-                return resp
+                    {"Message": "User Creation Success"}), 200)
             else:
                 resp = make_response(json.dumps(
-                    {"Error": "User Already Exists"}), 401)
-                resp.headers['Content-Type'] = 'application/json'
-                resp.headers.add('Access-Control-Allow-Origin', '*')
-                resp.headers.add('Access-Control-Allow-Headers',
-                                 'Content-Type,Authorization')
-                resp.headers.add('Access-Control-Allow-Methods',
-                                 'GET,PUT,POST,DELETE,OPTIONS')
+                    {"Message": "User Already Exists"}), 409)
 
-                return resp
+        # CORS nonsense
+        resp.headers['Content-Type'] = 'application/json'
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        resp.headers.add('Access-Control-Allow-Headers',
+                         'Content-Type,Authorization')
+        resp.headers.add('Access-Control-Allow-Methods',
+                         'GET,PUT,POST,DELETE,OPTIONS')
+        return resp
 
     if request.method == 'GET':
         return 'why would you do that'
