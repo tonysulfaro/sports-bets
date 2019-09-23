@@ -73,7 +73,9 @@ def authenticate_user(username, password):
     conn = sqlite3.connect('sports-bets.db')
     c = conn.cursor()
 
-    result = c.execute('''select * from logins where username = ?''', username)
+    c.execute('''select * from logins where username = ?''', [username])
+
+    user_record = c.fetchone()
 
     # Save (commit) the changes
     conn.commit()
@@ -82,6 +84,15 @@ def authenticate_user(username, password):
     # Just be sure any changes have been committed or they will be lost.
     conn.close()
 
+    # check if hashes match
+    stored_hash = user_record[2]
+    stored_salt = user_record[3]
+
+    generated_hash = hashlib.sha256(
+        (password + stored_salt).encode('utf-8')).hexdigest()
+
+    if generated_hash == stored_hash:
+        return True
     return False
 
 
@@ -90,16 +101,16 @@ def login():
     if request.method == 'POST':  # this block is only entered when the form is submitted
         username = request.form.get('username')
         password = request.form.get('password')
+        submit_type = request.form.get('submit')
 
-        if not user_exists(username):
-
-            create_user(username, password)
+        if submit_type == "login":
+            authenticated = authenticate_user(username, password)
 
             # spit out token to use as user
             token = secrets.token_urlsafe(24)
 
             resp = make_response(json.dumps(
-                {"token": token}), 200)
+                {"token": token, "authenticated": authenticated}), 200)
             resp.headers['Content-Type'] = 'application/json'
             resp.headers.add('Access-Control-Allow-Origin', '*')
             resp.headers.add('Access-Control-Allow-Headers',
@@ -108,17 +119,37 @@ def login():
                              'GET,PUT,POST,DELETE,OPTIONS')
 
             return resp
-        else:
-            resp = make_response(json.dumps(
-                {"Error": "User Already Exists"}), 401)
-            resp.headers['Content-Type'] = 'application/json'
-            resp.headers.add('Access-Control-Allow-Origin', '*')
-            resp.headers.add('Access-Control-Allow-Headers',
-                             'Content-Type,Authorization')
-            resp.headers.add('Access-Control-Allow-Methods',
-                             'GET,PUT,POST,DELETE,OPTIONS')
 
-            return resp
+        elif submit_type == 'signup':
+
+            if not user_exists(username):
+
+                create_user(username, password)
+
+                # spit out token to use as user
+                token = secrets.token_urlsafe(24)
+
+                resp = make_response(json.dumps(
+                    {"token": token, "authenticated": authenticated}), 200)
+                resp.headers['Content-Type'] = 'application/json'
+                resp.headers.add('Access-Control-Allow-Origin', '*')
+                resp.headers.add('Access-Control-Allow-Headers',
+                                 'Content-Type,Authorization')
+                resp.headers.add('Access-Control-Allow-Methods',
+                                 'GET,PUT,POST,DELETE,OPTIONS')
+
+                return resp
+            else:
+                resp = make_response(json.dumps(
+                    {"Error": "User Already Exists"}), 401)
+                resp.headers['Content-Type'] = 'application/json'
+                resp.headers.add('Access-Control-Allow-Origin', '*')
+                resp.headers.add('Access-Control-Allow-Headers',
+                                 'Content-Type,Authorization')
+                resp.headers.add('Access-Control-Allow-Methods',
+                                 'GET,PUT,POST,DELETE,OPTIONS')
+
+                return resp
 
     if request.method == 'GET':
         return 'why would you do that'
