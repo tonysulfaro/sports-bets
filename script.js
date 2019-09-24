@@ -20,42 +20,48 @@ const Bets = function () {
 
             // login button clicked
             if (event.srcElement.id == 'login-button') {
+
                 event.preventDefault();
                 console.log('login time');
 
                 var login_form = document.getElementById('loginform');
                 login_form.innerHTML = '';
+
                 let current_user = `<span class="navbar-text light">
                 email@gmail.com</span>`;
                 let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
                     value="logout">Logout</button>`;
+
                 login_form.insertAdjacentHTML('beforeend', current_user)
                 login_form.insertAdjacentHTML('beforeend', logout_button)
             }
             // signup button clicked
             else if (event.srcElement.id == 'signup-button') {
+
                 event.preventDefault();
                 console.log('signup time');
 
                 var login_form = document.getElementById('loginform');
                 login_form.innerHTML = '';
+
                 let current_user = `<span class="navbar-text light">
                 email@gmail.com</span>`;
                 let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
                     value="logout">Logout</button>`;
+
                 login_form.insertAdjacentHTML('beforeend', current_user)
                 login_form.insertAdjacentHTML('beforeend', logout_button)
             }
             // logout button clicked
             else if (event.srcElement.id == 'logout-button') {
+
                 event.preventDefault();
                 console.log('logging out');
                 window.location.reload();
-
-
             }
             // show games on nav click
             else if (event.srcElement.id == 'games-link') {
+
                 let url = 'https://api.collegefootballdata.com/games?year=2019&seasonType=regular&week=3';
 
                 fetch(url)
@@ -81,32 +87,30 @@ const Bets = function () {
                             let away_points = element['away_points'];
 
                             var gameCard = `
-                <div class="card">
-                <div class="card-header">
-                    ` + away_team + ' at ' + home_team + `
-                </div>
-                <div class="card-body">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-9">
-
-                                <p>Start Time: ` + start_date + `</p>
-                                <h3>Current Score</h3>
-                                <p>` + home_team + " : " + home_points + `</p>
-                                <p>` + away_team + " : " + away_points + `</p>
-
+                            <div class="card">
+                            <div class="card-header">
+                                ` + away_team + ' at ' + home_team + `
                             </div>
-                            <div class="col-sm-3">
-                                <div class="card-actions">
-                                    <button type="button" class="btn btn-success">Place Bet</button>
+                            <div class="card-body">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-sm-9">
+
+                                            <p>Start Time: ` + start_date + `</p>
+                                            <h3>Current Score</h3>
+                                            <p>` + home_team + " : " + home_points + `</p>
+                                            <p>` + away_team + " : " + away_points + `</p>
+
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="card-actions">
+                                                <button type="button" class="btn btn-success">Place Bet</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-
-
+                            </div>`;
                             game_container.insertAdjacentHTML('beforeend', gameCard);
 
                         });
@@ -125,46 +129,47 @@ const Bets = function () {
                 standings_container.innerHTML = "";
 
                 let head = `<h1>My Bets</h1>`;
-                let sample_table = `<table class="table">
-            <thead class="thead-dark">
-            <tr>
-                <th scope="col">Date</th>
-                <th scope="col">Game</th>
-                <th scope="col">Pick</th>
-                <th scope="col">Winner</th>
-                <th scope="col">Ratio</th>
-                <th scope="col">Investment</th>
-                <th scope="col">Value</th>
-                <th scope="col">Net Gain / Loss</th>
-            </tr>
-            </thead>
+                let sample_table =
+                    `<table class="table">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Game</th>
+                        <th scope="col">Pick</th>
+                        <th scope="col">Winner</th>
+                        <th scope="col">Ratio</th>
+                        <th scope="col">Investment</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Net Gain / Loss</th>
+                    </tr>
+                    </thead>
 
-            <tbody>
-            <tr>
-                <th scope="row">9/14/19</th>
-                <td>Arizona State At Michigan State</td>
-                <td>Michigan State</td>
-                <td>Arizona State</td>
-                <td>2:1</td>
-                <td>$20.00</td>
-                <td>-$40.00</td>
-                <td>-$40.00</td>
-            </tr>
-            </tbody>
+                    <tbody>
+                    <tr>
+                        <th scope="row">9/14/19</th>
+                        <td>Arizona State At Michigan State</td>
+                        <td>Michigan State</td>
+                        <td>Arizona State</td>
+                        <td>2:1</td>
+                        <td>$20.00</td>
+                        <td>-$40.00</td>
+                        <td>-$40.00</td>
+                    </tr>
+                    </tbody>
 
-            <thead class="bg-danger">
-                <tr>
-                <th scope="col">Totals</th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col"></th>
-                <th scope="col">$20.00</th>
-                <th scope="col">-$40.00</th>
-                <th scope="col">-$40.00</th>
-                </tr>
-            </thead>
-        </table>`;
+                    <thead class="bg-danger">
+                        <tr>
+                        <th scope="col">Totals</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col">$20.00</th>
+                        <th scope="col">-$40.00</th>
+                        <th scope="col">-$40.00</th>
+                        </tr>
+                    </thead>
+                    </table>`;
 
                 standings_container.insertAdjacentHTML('beforeend', head);
                 standings_container.insertAdjacentHTML('beforeend', sample_table);
