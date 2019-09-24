@@ -127,56 +127,33 @@ window.onload = function () {
 
     });
 
-    // log user into service
-    var login_button = this.document.getElementById('login-button');
-    login_button.addEventListener('click', function () {
-        event.preventDefault();
+    // auth buttons
+    this.document.addEventListener('click', function (event) {
+        if (event.srcElement.id == 'login-button') {
+            event.preventDefault();
+            console.log('login time');
 
-        console.log('in login form');
-
-        // modify nav items, hacky yes it is
-        var login_form = document.getElementById('loginform');
-        login_form.innerHTML = '';
-        let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
+            var login_form = document.getElementById('loginform');
+            login_form.innerHTML = '';
+            let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
                     value="logout">Logout</button>`;
-        login_form.insertAdjacentHTML('beforeend', logout_button)
+            login_form.insertAdjacentHTML('beforeend', logout_button)
 
-        // use fetch to make the call
+        } else if (event.srcElement.id == 'signup-button') {
+            event.preventDefault();
+            console.log('signup time');
 
-        // modify stylings on elements
+            var login_form = document.getElementById('loginform');
+            login_form.innerHTML = '';
+            let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
+                    value="logout">Logout</button>`;
+            login_form.insertAdjacentHTML('beforeend', logout_button)
 
-        // logout button preventdefault
-        this.document.getElementById('logout-button').addEventListener('click', function () {
+        } else if (event.srcElement.id == 'logout-button') {
             event.preventDefault();
             console.log('logging out');
-        });
+            window.location.reload();
+        }
     });
-
-    // signup user into service
-    var signup_button = this.document.getElementById('signup-button');
-    signup_button.addEventListener('click', function () {
-        event.preventDefault();
-
-        console.log('in login form');
-
-        // modify nav items, hacky yes it is
-        var login_form = document.getElementById('loginform');
-        login_form.innerHTML = '';
-        let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
-                    value="logout">Logout</button>`;
-        login_form.insertAdjacentHTML('beforeend', logout_button)
-
-        // use fetch to make the call
-
-        // modify stylings on elements
-
-        // logout button preventdefault
-        this.document.getElementById('logout-button').addEventListener('click', function () {
-            event.preventDefault();
-            console.log('logging out');
-        });
-
-    });
-
 
 }
