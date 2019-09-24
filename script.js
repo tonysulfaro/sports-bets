@@ -7,35 +7,64 @@ var USERINFO = {
 window.onload = function () {
     this.console.log('doing stuff on load');
 
-    var game_link = this.document.getElementById('games-link');
+    // auth buttons
+    this.document.addEventListener('click', function (event) {
 
-    // show games to bet on
-    game_link.addEventListener("click", function () {
-        let url = 'https://api.collegefootballdata.com/games?year=2019&seasonType=regular&week=3';
+        // login button clicked
+        if (event.srcElement.id == 'login-button') {
+            event.preventDefault();
+            console.log('login time');
 
-        fetch(url)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (json_response) {
-                console.log(json_response);
+            var login_form = document.getElementById('loginform');
+            login_form.innerHTML = '';
+            let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
+                    value="logout">Logout</button>`;
+            login_form.insertAdjacentHTML('beforeend', logout_button)
 
-                let game_container = document.getElementById('userView');
-                game_container.innerHTML = "";
+            // signup button clicked
+        } else if (event.srcElement.id == 'signup-button') {
+            event.preventDefault();
+            console.log('signup time');
 
-                //add game header
-                let game_header = `<h1>Games</h1>`;
-                game_container.insertAdjacentHTML('beforeend', game_header);
+            var login_form = document.getElementById('loginform');
+            login_form.innerHTML = '';
+            let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
+                    value="logout">Logout</button>`;
+            login_form.insertAdjacentHTML('beforeend', logout_button)
 
-                json_response.forEach(element => {
+            // logout button clicked
+        } else if (event.srcElement.id == 'logout-button') {
+            event.preventDefault();
+            console.log('logging out');
+            window.location.reload();
 
-                    let home_team = element['home_team'];
-                    let away_team = element['away_team'];
-                    let start_date = element['start_date'];
-                    let home_points = element['home_points'];
-                    let away_points = element['away_points'];
+            // show games on nav click
+        } else if (event.srcElement.id == 'games-link') {
+            let url = 'https://api.collegefootballdata.com/games?year=2019&seasonType=regular&week=3';
 
-                    var gameCard = `
+            fetch(url)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then(function (json_response) {
+                    console.log(json_response);
+
+                    let game_container = document.getElementById('userView');
+                    game_container.innerHTML = "";
+
+                    //add game header
+                    let game_header = `<h1>Games</h1>`;
+                    game_container.insertAdjacentHTML('beforeend', game_header);
+
+                    json_response.forEach(element => {
+
+                        let home_team = element['home_team'];
+                        let away_team = element['away_team'];
+                        let start_date = element['start_date'];
+                        let home_points = element['home_points'];
+                        let away_points = element['away_points'];
+
+                        var gameCard = `
                 <div class="card">
                 <div class="card-header">
                     ` + away_team + ' at ' + home_team + `
@@ -62,26 +91,23 @@ window.onload = function () {
             </div>`;
 
 
-                    game_container.insertAdjacentHTML('beforeend', gameCard);
+                        game_container.insertAdjacentHTML('beforeend', gameCard);
 
-                });
-            })
-    });
+                    });
+                })
+            // show standings when authenticated
+        } else if (event.srcElement.id == 'standings-link') {
+            if (!USERINFO['authenticated']) {
+                return;
+            }
 
-    var standings_link = this.document.getElementById('standings-link');
-    // show standings if authenticated
-    standings_link.addEventListener("click", function () {
-        if (!USERINFO['authenticated']) {
-            return;
-        }
+            let standings_container = document.getElementById('userView');
 
-        let standings_container = document.getElementById('userView');
+            // remove children
+            standings_container.innerHTML = "";
 
-        // remove children
-        standings_container.innerHTML = "";
-
-        let head = `<h1>My Bets</h1>`;
-        let sample_table = `<table class="table">
+            let head = `<h1>My Bets</h1>`;
+            let sample_table = `<table class="table">
             <thead class="thead-dark">
             <tr>
                 <th scope="col">Date</th>
@@ -122,37 +148,8 @@ window.onload = function () {
             </thead>
         </table>`;
 
-        standings_container.insertAdjacentHTML('beforeend', head);
-        standings_container.insertAdjacentHTML('beforeend', sample_table);
-
-    });
-
-    // auth buttons
-    this.document.addEventListener('click', function (event) {
-        if (event.srcElement.id == 'login-button') {
-            event.preventDefault();
-            console.log('login time');
-
-            var login_form = document.getElementById('loginform');
-            login_form.innerHTML = '';
-            let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
-                    value="logout">Logout</button>`;
-            login_form.insertAdjacentHTML('beforeend', logout_button)
-
-        } else if (event.srcElement.id == 'signup-button') {
-            event.preventDefault();
-            console.log('signup time');
-
-            var login_form = document.getElementById('loginform');
-            login_form.innerHTML = '';
-            let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
-                    value="logout">Logout</button>`;
-            login_form.insertAdjacentHTML('beforeend', logout_button)
-
-        } else if (event.srcElement.id == 'logout-button') {
-            event.preventDefault();
-            console.log('logging out');
-            window.location.reload();
+            standings_container.insertAdjacentHTML('beforeend', head);
+            standings_container.insertAdjacentHTML('beforeend', sample_table);
         }
     });
 
