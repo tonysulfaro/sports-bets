@@ -25,11 +25,12 @@ const Bets = function () {
 
                 var login_form = document.getElementById('loginform');
                 login_form.innerHTML = '';
+                let current_user = `<span class="navbar-text light">
+                email@gmail.com</span>`;
                 let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
                     value="logout">Logout</button>`;
+                login_form.insertAdjacentHTML('beforeend', current_user)
                 login_form.insertAdjacentHTML('beforeend', logout_button)
-
-
             }
             // signup button clicked
             else if (event.srcElement.id == 'signup-button') {
@@ -38,11 +39,12 @@ const Bets = function () {
 
                 var login_form = document.getElementById('loginform');
                 login_form.innerHTML = '';
+                let current_user = `<span class="navbar-text light">
+                email@gmail.com</span>`;
                 let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
                     value="logout">Logout</button>`;
+                login_form.insertAdjacentHTML('beforeend', current_user)
                 login_form.insertAdjacentHTML('beforeend', logout_button)
-
-
             }
             // logout button clicked
             else if (event.srcElement.id == 'logout-button') {
