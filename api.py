@@ -96,12 +96,20 @@ def authenticate_user(username, password):
     return False
 
 
+def validate_token(user_token):
+
+    # probably store tokens with users
+    pass
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':  # this block is only entered when the form is submitted
         username = request.form.get('username')
         password = request.form.get('password')
         submit_type = request.form.get('submit')
+
+        #submit_type = request.form['signup']
 
         resp = make_response()
 
@@ -143,6 +151,15 @@ def login():
 
     if request.method == 'GET':
         return 'why would you do that'
+
+
+@app.route('/bets', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def bet_actions():
+
+    user_token = request.args.get('token')
+
+    if validate_token(user_token):
+        pass
 
 
 if __name__ == "__main__":
