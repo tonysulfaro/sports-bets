@@ -65,6 +65,14 @@ const Bets = function () {
                         // show games
                         showGames();
 
+                        // might need this for later
+
+                        // var bet_buttons = document.getElementsByClassName('place-bet');
+                        // console.log(bet_buttons);
+                        // for (let item of bet_buttons) {
+                        //     console.log(item);
+                        // }
+
                         // show alert
                         $('#login-failure-alert').hide();
                         $('#login-success-alert').show();
@@ -204,6 +212,7 @@ const Bets = function () {
                 standings_container.insertAdjacentHTML('beforeend', head);
                 standings_container.insertAdjacentHTML('beforeend', sample_table);
             }
+
         });
     }
 
@@ -250,7 +259,7 @@ const Bets = function () {
                                         </div>
                                         <div class="col-sm-3">
                                             <div class="card-actions">
-                                                <button type="button" class="btn btn-success">Place Bet</button>
+                                                <button type="button" class="btn btn-success place-bet">Place Bet</button>
                                             </div>
                                         </div>
                                     </div>
