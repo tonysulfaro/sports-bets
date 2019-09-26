@@ -128,7 +128,7 @@ def login():
 
             if not authenticated:
                 resp = make_response(json.dumps(
-                    {"Message": "Authentication Failed", "authenticated": authenticated}), 401)
+                    {"Message": "Authentication Failed", "Authenticated": authenticated}), 401)
             else:
                 # spit out token to use as user
                 token = secrets.token_urlsafe(24)

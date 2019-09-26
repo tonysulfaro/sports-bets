@@ -13,3 +13,13 @@ h1 {
 form button {
     margin: 0 0 0 1em;
 }
+
+.sticky-footer {
+    position: fixed;
+    bottom: 0%;
+    width: 90%;
+}
+
+.alert {
+    display: none;
+}

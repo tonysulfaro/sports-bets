@@ -62,6 +62,10 @@ const Bets = function () {
                     if (USERINFO['authenticated']) {
                         console.log('authenticated');
 
+                        // show alert
+                        $('#login-failure-alert').hide();
+                        $('#login-success-alert').show();
+
                         var login_form = document.getElementById('loginform');
                         login_form.innerHTML = '';
                         let current_user = json['Username'];
@@ -75,6 +79,7 @@ const Bets = function () {
 
                     } else {
                         // display authentication error
+                        $('#login-failure-alert').show();
                     }
 
                 } catch (error) {
