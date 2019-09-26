@@ -27,9 +27,15 @@ const Bets = function () {
                 console.log('lets try to login at the endpoint')
 
                 let login_url = 'http://localhost:5000/login';
+
+                let form_username = document.getElementById('username-input').value;
+                let form_password = document.getElementById('password-input').value;
+
+                console.log(form_username, form_password);
+
                 let payload = {
-                    username: "unameee",
-                    password: "newpass",
+                    username: form_username,
+                    password: form_password,
                     submit_type: "login"
                 };
 
@@ -47,22 +53,30 @@ const Bets = function () {
                     const json = await response.json();
                     console.log('Success:', json);
 
-                    var login_form = document.getElementById('loginform');
-                    login_form.innerHTML = '';
-
                     // update global
-                    USERINFO['authenticated'] = true;
+                    USERINFO['authenticated'] = json['Authenticated'];
                     USERINFO['username'] = json['Username'];
                     USERINFO['token'] = json['Token'];
 
-                    let current_user = json['Username'];
-                    let current_user_label = `<span class="navbar-text light">
+                    // only modify nav if authenticated
+                    if (USERINFO['authenticated']) {
+                        console.log('authenticated');
+
+                        var login_form = document.getElementById('loginform');
+                        login_form.innerHTML = '';
+                        let current_user = json['Username'];
+                        let current_user_label = `<span class="navbar-text light">
                 ` + current_user + `</span>`;
-                    let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
+                        let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
                     value="logout">Logout</button>`;
 
-                    login_form.insertAdjacentHTML('beforeend', current_user_label)
-                    login_form.insertAdjacentHTML('beforeend', logout_button)
+                        login_form.insertAdjacentHTML('beforeend', current_user_label)
+                        login_form.insertAdjacentHTML('beforeend', logout_button)
+
+                    } else {
+                        // display authentication error
+                    }
+
                 } catch (error) {
                     console.error('Error:', error);
                 }
