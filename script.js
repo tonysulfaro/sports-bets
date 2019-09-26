@@ -1,6 +1,6 @@
 var USERINFO = {
-    authenticated: true,
-    email: null,
+    authenticated: false,
+    username: null,
     token: null
 }
 
@@ -16,7 +16,7 @@ const Bets = function () {
 
     function installListeners() {
         // auth buttons
-        this.document.addEventListener('click', function (event) {
+        this.document.addEventListener('click', async function (event) {
 
             // login button clicked
             if (event.srcElement.id == 'login-button') {
@@ -24,16 +24,48 @@ const Bets = function () {
                 event.preventDefault();
                 console.log('login time');
 
-                var login_form = document.getElementById('loginform');
-                login_form.innerHTML = '';
+                console.log('lets try to login at the endpoint')
 
-                let current_user = `<span class="navbar-text light">
-                email@gmail.com</span>`;
-                let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
+                let login_url = 'http://localhost:5000/login';
+                let payload = {
+                    username: "unameee",
+                    password: "newpass",
+                    submit_type: "login"
+                };
+
+                console.log('payload')
+                console.log(payload)
+
+                try {
+                    const response = await fetch(login_url, {
+                        method: 'POST', // or 'PUT'
+                        body: JSON.stringify(payload), // data can be `string` or {object}!
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const json = await response.json();
+                    console.log('Success:', json);
+
+                    var login_form = document.getElementById('loginform');
+                    login_form.innerHTML = '';
+
+                    // update global
+                    USERINFO['authenticated'] = true;
+                    USERINFO['username'] = json['Username'];
+                    USERINFO['token'] = json['Token'];
+
+                    let current_user = json['Username'];
+                    let current_user_label = `<span class="navbar-text light">
+                ` + current_user + `</span>`;
+                    let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
                     value="logout">Logout</button>`;
 
-                login_form.insertAdjacentHTML('beforeend', current_user)
-                login_form.insertAdjacentHTML('beforeend', logout_button)
+                    login_form.insertAdjacentHTML('beforeend', current_user_label)
+                    login_form.insertAdjacentHTML('beforeend', logout_button)
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             }
             // signup button clicked
             else if (event.srcElement.id == 'signup-button') {

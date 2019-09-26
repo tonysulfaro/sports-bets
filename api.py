@@ -1,5 +1,8 @@
 # A very simple Flask Hello World app for you to get started with...
 
+from datetime import timedelta
+from functools import update_wrapper
+from flask import make_response, request, current_app
 from flask import Flask, request, make_response
 import json
 import hashlib
@@ -7,8 +10,10 @@ import random
 import string
 import sqlite3
 import secrets
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route('/')
@@ -105,9 +110,13 @@ def validate_token(user_token):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':  # this block is only entered when the form is submitted
-        username = request.form.get('username')
-        password = request.form.get('password')
-        submit_type = request.form.get('submit')
+
+        content = request.json
+        print(content)
+
+        username = content['username']
+        password = content['password']
+        submit_type = content['submit_type']
 
         #submit_type = request.form['signup']
 
@@ -125,7 +134,7 @@ def login():
                 token = secrets.token_urlsafe(24)
 
                 resp = make_response(json.dumps(
-                    {"Token": token, "Authenticated": authenticated}), 200)
+                    {"Username": username, "Token": token, "Authenticated": authenticated}), 200)
 
         # create new user if not exist
         elif submit_type == 'signup':
@@ -147,6 +156,7 @@ def login():
                          'Content-Type,Authorization')
         resp.headers.add('Access-Control-Allow-Methods',
                          'GET,PUT,POST,DELETE,OPTIONS')
+        resp.headers.add('Access-Control-Allow-Credentials', 'true')
         return resp
 
     if request.method == 'GET':
