@@ -26,7 +26,7 @@ const Bets = function () {
 
                 console.log('lets try to login at the endpoint')
 
-                let login_url = 'http://localhost:5000/login';
+                let login_url = 'http://tony116523.pythonanywhere.com/login';
 
                 let form_username = document.getElementById('username-input').value;
                 let form_password = document.getElementById('password-input').value;
@@ -105,7 +105,7 @@ const Bets = function () {
 
                 console.log('lets try to signup at the endpoint')
 
-                let login_url = 'http://localhost:5000/login';
+                let login_url = 'http://tony116523.pythonanywhere.com/login';
 
                 let form_username = document.getElementById('username-input').value;
                 let form_password = document.getElementById('password-input').value;
