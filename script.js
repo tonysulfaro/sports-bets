@@ -27,6 +27,7 @@ const Bets = function () {
                 console.log('lets try to login at the endpoint')
 
                 let login_url = 'http://localhost:5000/login';
+                // let login_url = 'https://tony116523.pythonanywhere.com/login';
 
                 let form_username = document.getElementById('username-input').value;
                 let form_password = document.getElementById('password-input').value;
@@ -80,7 +81,7 @@ const Bets = function () {
                         var login_form = document.getElementById('loginform');
                         login_form.innerHTML = '';
                         let current_user = json['Username'];
-                        let current_user_label = `<span class="navbar-text light">
+                        let current_user_label = `<span id="current-user" class="navbar-text light">
                 ` + current_user + `</span>`;
                         let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
                     value="logout">Logout</button>`;
@@ -106,6 +107,7 @@ const Bets = function () {
                 console.log('lets try to signup at the endpoint')
 
                 let login_url = 'http://localhost:5000/login';
+                // let login_url = 'https://tony116523.pythonanywhere.com/login';
 
                 let form_username = document.getElementById('username-input').value;
                 let form_password = document.getElementById('password-input').value;
@@ -213,6 +215,8 @@ const Bets = function () {
                 standings_container.insertAdjacentHTML('beforeend', sample_table);
             }
 
+            console.log(event.classList)
+
         });
     }
 
@@ -235,6 +239,7 @@ const Bets = function () {
 
                 json_response.forEach(element => {
 
+                    let game_id = element['id'];
                     let home_team = element['home_team'];
                     let away_team = element['away_team'];
                     let start_date = element['start_date'];

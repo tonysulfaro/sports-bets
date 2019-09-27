@@ -1,5 +1,13 @@
 h1 {
-    margin: 1em 0 1em 0;
+    margin: 0 0 1em 0;
+}
+
+.container {
+    margin-top: 1em;
+}
+
+#current-user {
+    color: #ffffff;
 }
 
 .card {
@@ -22,4 +30,9 @@ form button {
 
 .alert {
     display: none;
+}
+
+.spinner-border {
+    margin-top: 1em;
+    visibility: hidden;
 }
