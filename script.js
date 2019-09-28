@@ -112,6 +112,12 @@ const Bets = function () {
 
                 console.log(form_username, form_password);
 
+                // form validation
+                if (form_username == '' || form_password == '') {
+                    alert('username and password cannot be null');
+                    return;
+                }
+
                 let payload = {
                     username: form_username,
                     password: form_password,
