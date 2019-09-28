@@ -10,10 +10,8 @@ import random
 import string
 import sqlite3
 import secrets
-from flask_cors import CORS
 
 app = Flask(__name__)
-CORS(app)
 
 
 @app.route('/')
@@ -24,7 +22,7 @@ def hello_world():
 def user_exists(username):
     conn = sqlite3.connect('sports-bets.db')
     c = conn.cursor()
-    c.execute('''CREATE TABLE if not exists logins 
+    c.execute('''CREATE TABLE if not exists logins
                         (id integer primary key, username VARCHAR(255), hash VARCHAR(255), salt VARCHAR(255))''')
 
     c.execute('select * from logins where username=?', [username])
@@ -49,7 +47,7 @@ def create_user(username, password):
 
     try:
         # Create table if not exists
-        c.execute('''CREATE TABLE if not exists logins 
+        c.execute('''CREATE TABLE if not exists logins
                         (id integer primary key, username VARCHAR(255), hash VARCHAR(255), salt VARCHAR(255))''')
 
         # insert user
@@ -107,8 +105,18 @@ def validate_token(user_token):
     pass
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['GET', 'POST', 'OPTIONS'])
 def login():
+    if request.method == 'OPTIONS':
+        resp = make_response()
+        resp.headers['Content-Type'] = 'application/json'
+        resp.headers.add('Access-Control-Allow-Origin', '*')
+        resp.headers.add('Access-Control-Allow-Headers',
+                         'Content-Type,Authorization')
+        resp.headers.add('Access-Control-Allow-Methods',
+                         'GET,PUT,POST,DELETE,OPTIONS')
+        return resp
+
     if request.method == 'POST':  # this block is only entered when the form is submitted
 
         content = request.json
@@ -156,7 +164,6 @@ def login():
                          'Content-Type,Authorization')
         resp.headers.add('Access-Control-Allow-Methods',
                          'GET,PUT,POST,DELETE,OPTIONS')
-        resp.headers.add('Access-Control-Allow-Credentials', 'true')
         return resp
 
     if request.method == 'GET':
@@ -172,5 +179,12 @@ def bet_actions():
         pass
 
 
+@app.after_request  # blueprint can also be app~~
+def after_request(response):
+    header = response.headers
+    header['Access-Control-Allow-Origin'] = '*'
+    return response
+
+
 if __name__ == "__main__":
-    app.run()
+    app.run
