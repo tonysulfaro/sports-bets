@@ -32,26 +32,19 @@
                 </li>
 
             </ul>
-            <!-- https://tony116523.pythonanywhere.com/login -->
-            <form id="loginform" class="form-inline my-2 my-lg-0" action="http://localhost:5000/login" method="POST">
-                <input id="username-input" class="form-control mr-sm-2" type="email" placeholder="Username"
-                    aria-label="Username" required>
-                <input id="password-input" class="form-control mr-sm-2" type="password" placeholder="Password"
-                    aria-label="Password" required>
-                <button id="login-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
-                    value="login">Login</button>
-                <button id="signup-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
-                    value="signup">Sign Up</button>
+
+            <form  id="loginformnav" class="form-inline my-2 my-lg-0">
             </form>
         </div>
     </nav>
 
     <div class="container">
 
-        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"
+        <!-- sample button thing with modal form -->
+        <!-- <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"
             data-whatever="@mdo">Place
-            Bet</button>
-        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            Bet</button> -->
+        <!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
             aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -104,7 +97,20 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
+
+        <form id="loginform" class="login-form">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Email address</label>
+                  <input id="username-input" type="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword1">Password</label>
+                  <input id="password-input" type="password" class="form-control" placeholder="Password">
+                </div>
+                <button id="login-button" type="submit" value="login" class="btn btn-primary">Login</button>
+                <button id="signup-button" type="submit" value="signup" class="btn btn-primary">Signup</button>
+              </form>
 
         <div id="userView">
 
@@ -137,12 +143,11 @@
                 </div>
             </div> -->
 
-
-
         </div>
 
+    </div>
 
-        <div class="sticky-footer">
+    <div class="sticky-footer">
 
             <div id="login-success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Login Successful</strong>
@@ -159,10 +164,6 @@
             </div>
 
         </div>
-
-    </div>
-
-
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

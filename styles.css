@@ -1,13 +1,13 @@
+body {
+    /* background-image: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, 0)), url("images/football.jpg"); */
+    background-attachment: scroll;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 h1 {
-    margin: 0 0 1em 0;
-}
-
-.container {
-    margin-top: 1em;
-}
-
-#current-user {
-    color: #ffffff;
+    margin: 1em 0 1em 0;
 }
 
 .card {
@@ -25,14 +25,21 @@ form button {
 .sticky-footer {
     position: fixed;
     bottom: 0%;
-    width: 90%;
+    width: 100%;
+    margin: auto;
+    padding: 0 2em 0 2em;
 }
 
 .alert {
     display: none;
 }
 
-.spinner-border {
-    margin-top: 1em;
-    visibility: hidden;
+/* temp */
+.login-form {
+    margin: 25% auto;
+    max-width: 500px;
+    padding: 2em;
+    border-radius: 10px;
+    background-color: #353942;
+    color: white;
 }

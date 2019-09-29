@@ -77,8 +77,16 @@ const Bets = function () {
                         $('#login-failure-alert').hide();
                         $('#login-success-alert').show();
 
-                        var login_form = document.getElementById('loginform');
+                        var login_form = document.getElementById('loginformnav');
                         login_form.innerHTML = '';
+
+                        // remove main login form when logged in
+                        var login_form_center = document.getElementById('loginform');
+                        login_form_center.parentElement.removeChild(login_form_center);
+
+                        // set background to white
+                        document.body.style.backgroundImage = null;
+
                         let current_user = json['Username'];
                         let current_user_label = `<span id="current-user" class="navbar-text light">
                 ` + current_user + `</span>`;
