@@ -97,7 +97,7 @@ const Bets = function () {
                         login_form_center.parentElement.removeChild(login_form_center);
 
                         // set background to white
-                        document.body.style.backgroundImage = null;
+                        document.body.style.background = 'none';
 
                         let current_user = json['Username'];
                         let current_user_label = `<span id="current-user" class="navbar-text light">
