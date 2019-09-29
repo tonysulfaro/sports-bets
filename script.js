@@ -80,6 +80,18 @@ const Bets = function () {
                         var login_form = document.getElementById('loginformnav');
                         login_form.innerHTML = '';
 
+                        // place user nav links into navbar when authenticated
+                        var nav_bar_container = document.getElementById('navbarSupportedContent');
+                        let nav_items = `<ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                            <a id="games-link" class="nav-link" href="#">Games <span class="sr-only">(current)</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="standings-link" class="nav-link" href="#">My Standings</a>
+                        </li>
+                    </ul>`;
+                        nav_bar_container.insertAdjacentHTML('afterbegin', nav_items);
+
                         // remove main login form when logged in
                         var login_form_center = document.getElementById('loginform');
                         login_form_center.parentElement.removeChild(login_form_center);
