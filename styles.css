@@ -1,9 +1,8 @@
 body {
-    background-image: linear-gradient(rgba(0, 0, 0, .5), rgba(0, 0, 0, 0)), url("images/football.jpg");
-    background-attachment: scroll;
+    background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url("images/football.jpg");
+    height: 100vh;
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;
 }
 
 h1 {
@@ -36,7 +35,7 @@ form button {
 
 /* temp */
 .login-form {
-    margin: 25% auto;
+    margin: 25vh auto;
     max-width: 500px;
     padding: 2em;
     border-radius: 10px;
