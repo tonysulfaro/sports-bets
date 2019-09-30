@@ -22,25 +22,19 @@ const Bets = function () {
             if (event.srcElement.id == 'login-button') {
 
                 event.preventDefault();
-                console.log('login time');
-
-                console.log('lets try to login at the endpoint')
 
                 let login_url = 'https://tony116523.pythonanywhere.com/login';
-
                 let form_username = document.getElementById('username-input').value;
                 let form_password = document.getElementById('password-input').value;
 
                 console.log(form_username, form_password);
 
+                // payload for login to endpoint
                 let payload = {
                     username: form_username,
                     password: form_password,
                     submit_type: "login"
                 };
-
-                console.log('payload')
-                console.log(payload)
 
                 try {
                     const response = await fetch(login_url, {
@@ -51,7 +45,6 @@ const Bets = function () {
                         }
                     });
                     const json = await response.json();
-                    console.log('Success:', json);
 
                     // update global
                     USERINFO['authenticated'] = json['Authenticated'];
@@ -74,8 +67,9 @@ const Bets = function () {
                         // }
 
                         // show alert
-                        $('#login-failure-alert').hide();
-                        $('#login-success-alert').show();
+                        // $('#login-failure-alert').hide();
+                        // $('#login-success-alert').show();
+                        showAlert('success', 'Login Sucessful');
 
                         var login_form = document.getElementById('loginformnav');
                         login_form.innerHTML = '';
@@ -110,7 +104,7 @@ const Bets = function () {
 
                     } else {
                         // display authentication error
-                        $('#login-failure-alert').show();
+                        showAlert('failure', 'Login Failed');
                     }
 
                 } catch (error) {
@@ -121,32 +115,25 @@ const Bets = function () {
             else if (event.srcElement.id == 'signup-button') {
 
                 event.preventDefault();
-                console.log('signup time');
-
-                console.log('lets try to signup at the endpoint')
 
                 let login_url = 'https://tony116523.pythonanywhere.com/login';
-
                 let form_username = document.getElementById('username-input').value;
                 let form_password = document.getElementById('password-input').value;
 
-                console.log(form_username, form_password);
-
                 // form validation
                 if (form_username == '' || form_password == '') {
-                    alert('username and password cannot be null');
+                    showAlert('failure', 'username and password cannot be null');
                     return;
                 }
 
+                // payload for signup to endpoint
                 let payload = {
                     username: form_username,
                     password: form_password,
                     submit_type: "signup"
                 };
 
-                console.log('payload')
-                console.log(payload)
-
+                // send signup request
                 try {
                     const response = await fetch(login_url, {
                         method: 'POST', // or 'PUT'
@@ -156,12 +143,11 @@ const Bets = function () {
                         }
                     });
                     const json = await response.json();
-                    console.log('Success:', json);
 
                     if (response.status === 200) {
-                        alert('new user creation successful')
+                        showAlert('success', 'New User Created');
                     } else {
-                        alert('Error ' + json['Message'])
+                        showAlert('failure', json['Message']);
                     }
 
                 } catch (error) {
@@ -170,9 +156,7 @@ const Bets = function () {
             }
             // logout button clicked
             else if (event.srcElement.id == 'logout-button') {
-
                 event.preventDefault();
-                console.log('logging out');
                 window.location.reload();
             }
             // show games on nav click
@@ -242,6 +226,31 @@ const Bets = function () {
             console.log(event.classList)
 
         });
+    }
+
+    function showAlert(alert_type, message) {
+
+        console.log(message);
+
+        // hide alerts if present
+        $('#failure-alert').hide();
+        $('#success-alert').hide();
+
+
+        if (alert_type == 'success') {
+            $('#success-alert-text').text(message);
+            $('#success-alert').show();
+
+            // hide alert after time
+            setInterval(function () {
+                $('#success-alert').hide();
+            }, 2000);
+
+        } else if (alert_type == 'failure') {
+            $('#failure-alert-text').text(message);
+            $('#failure-alert').show();
+            // users must manually dismiss error messages
+        }
     }
 
     function showGames() {
