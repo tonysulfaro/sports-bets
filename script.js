@@ -1,7 +1,15 @@
-var USERINFO = {
+var SESSIONINFO = {
     authenticated: false,
     username: null,
-    token: null
+    token: null,
+    games: {
+        cfb: null,
+        nfl: null
+    },
+    endpoints: {
+        login: 'https://tony116523.pythonanywhere.com/login',
+        bet: 'https://tony116523.pythonanywhere.com/bet'
+    }
 }
 
 window.onload = function () {
@@ -11,6 +19,8 @@ window.onload = function () {
 }
 
 const Bets = function () {
+
+
 
     installListeners();
 
@@ -23,7 +33,6 @@ const Bets = function () {
 
                 event.preventDefault();
 
-                let login_url = 'https://tony116523.pythonanywhere.com/login';
                 let form_username = document.getElementById('username-input').value;
                 let form_password = document.getElementById('password-input').value;
 
@@ -36,8 +45,10 @@ const Bets = function () {
                     submit_type: "login"
                 };
 
+                console.log(SESSIONINFO);
+
                 try {
-                    const response = await fetch(login_url, {
+                    const response = await fetch(SESSIONINFO.endpoints.login, {
                         method: 'POST', // or 'PUT'
                         body: JSON.stringify(payload), // data can be `string` or {object}!
                         headers: {
@@ -47,28 +58,15 @@ const Bets = function () {
                     const json = await response.json();
 
                     // update global
-                    USERINFO['authenticated'] = json['Authenticated'];
-                    USERINFO['username'] = json['Username'];
-                    USERINFO['token'] = json['Token'];
+                    SESSIONINFO.authenticated = json['Authenticated'];
+                    SESSIONINFO.username = json['Username'];
+                    SESSIONINFO.token = json['Token'];
 
                     // only modify nav if authenticated
-                    if (USERINFO['authenticated']) {
-                        console.log('authenticated');
+                    if (SESSIONINFO.authenticated) {
 
                         // show games
                         showGames();
-
-                        // might need this for later
-
-                        // var bet_buttons = document.getElementsByClassName('place-bet');
-                        // console.log(bet_buttons);
-                        // for (let item of bet_buttons) {
-                        //     console.log(item);
-                        // }
-
-                        // show alert
-                        // $('#login-failure-alert').hide();
-                        // $('#login-success-alert').show();
                         showAlert('success', 'Login Sucessful');
 
                         var login_form = document.getElementById('loginformnav');
@@ -116,7 +114,6 @@ const Bets = function () {
 
                 event.preventDefault();
 
-                let login_url = 'https://tony116523.pythonanywhere.com/login';
                 let form_username = document.getElementById('username-input').value;
                 let form_password = document.getElementById('password-input').value;
 
@@ -135,7 +132,7 @@ const Bets = function () {
 
                 // send signup request
                 try {
-                    const response = await fetch(login_url, {
+                    const response = await fetch(SESSIONINFO.endpoints.login, {
                         method: 'POST', // or 'PUT'
                         body: JSON.stringify(payload), // data can be `string` or {object}!
                         headers: {
@@ -161,13 +158,13 @@ const Bets = function () {
             }
             // show games on nav click
             else if (event.srcElement.id == 'games-link') {
-                if (USERINFO['authenticated']) {
+                if (SESSIONINFO.authenticated) {
                     showGames();
                 }
             }
             // show standings when authenticated
             else if (event.srcElement.id == 'standings-link') {
-                if (!USERINFO['authenticated']) {
+                if (!SESSIONINFO.authenticated) {
                     return;
                 }
 
@@ -222,8 +219,21 @@ const Bets = function () {
                 standings_container.insertAdjacentHTML('beforeend', head);
                 standings_container.insertAdjacentHTML('beforeend', sample_table);
             }
+            // place bet clicked
+            else if (event.srcElement.id == 'place-bet') {
 
-            console.log(event.classList)
+                let game_id = event.srcElement.value;
+                let betting_game = SESSIONINFO.games.cfb.find(function (element) {
+                    return element['id'] == game_id;
+                });
+
+                // set game name in bet form
+                $('#game-name').val(betting_game.away_team + ' at ' + betting_game.home_team);
+
+                // add winner pick options in form
+                document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>` + betting_game.away_team + `</option>`);
+                document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>` + betting_game.home_team + `</option>`);
+            }
 
         });
     }
@@ -262,6 +272,7 @@ const Bets = function () {
             })
             .then(function (json_response) {
                 console.log(json_response);
+                SESSIONINFO.games.cfb = json_response
 
                 let game_container = document.getElementById('userView');
                 game_container.innerHTML = "";
@@ -280,7 +291,7 @@ const Bets = function () {
                     let away_points = element['away_points'];
 
                     var gameCard = `
-                            <div class="card">
+                            <div id="` + game_id + `"class="card">
                             <div class="card-header">
                                 ` + away_team + ' at ' + home_team + `
                             </div>
@@ -297,7 +308,9 @@ const Bets = function () {
                                         </div>
                                         <div class="col-sm-3">
                                             <div class="card-actions">
-                                                <button type="button" class="btn btn-success place-bet">Place Bet</button>
+                                                <button id="place-bet" value="` + game_id + `" type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"
+                                                    data-whatever="@mdo">Place
+                                                    Bet</button>
                                             </div>
                                         </div>
                                     </div>
