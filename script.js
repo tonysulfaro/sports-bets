@@ -13,8 +13,6 @@ var SESSIONINFO = {
 }
 
 window.onload = function () {
-    this.console.log('doing stuff on load');
-
     new Bets();
 }
 
@@ -35,8 +33,6 @@ const Bets = function () {
 
                 let form_username = document.getElementById('username-input').value;
                 let form_password = document.getElementById('password-input').value;
-
-                console.log(form_username, form_password);
 
                 // payload for login to endpoint
                 let payload = {
@@ -233,14 +229,25 @@ const Bets = function () {
                 // add winner pick options in form
                 document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>` + betting_game.away_team + `</option>`);
                 document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>` + betting_game.home_team + `</option>`);
+
+
+            }
+            // show message on bet placed
+            else if (event.srcElement.id == 'confirm-bet') {
+                // TODO: actually send request to place bet
+                showAlert('success', 'Bet Placed');
             }
 
+        });
+
+        // change modal form on bet type change
+        this.document.getElementById('bet-type-pick').addEventListener('change', function (event) {
+            let bet_type = event.srcElement.value;
+            updateBetForm(bet_type);
         });
     }
 
     function showAlert(alert_type, message) {
-
-        console.log(message);
 
         // hide alerts if present
         $('#failure-alert').hide();
@@ -254,12 +261,38 @@ const Bets = function () {
             // hide alert after time
             setInterval(function () {
                 $('#success-alert').hide();
-            }, 2000);
+            }, 4000);
 
         } else if (alert_type == 'failure') {
             $('#failure-alert-text').text(message);
             $('#failure-alert').show();
             // users must manually dismiss error messages
+        }
+    }
+
+    function updateBetForm(bet_type) {
+
+        let bet_form_controls = document.getElementById('bet-type-items');
+
+        function setBetFormItems(money_line_controls) {
+            bet_form_controls.innerHTML = '';
+            bet_form_controls.insertAdjacentHTML('beforeend', money_line_controls)
+        }
+
+        if (bet_type == 'over-under') {
+            let money_line_controls = ``;
+            setBetFormItems(money_line_controls);
+
+        } else if (bet_type == 'money-line') {
+            let money_line_controls = `<div class="form-group">
+                                    <label for="message-text" class="col-form-label">Money Line:</label>
+                                    <input type="number" class="form-control" id="money-line">
+                                </div>`;
+            setBetFormItems(money_line_controls);
+
+        } else if (bet_type == 'spread') {
+            let money_line_controls = ``;
+            setBetFormItems(money_line_controls);
         }
     }
 
@@ -271,7 +304,7 @@ const Bets = function () {
                 return response.json();
             })
             .then(function (json_response) {
-                console.log(json_response);
+
                 SESSIONINFO.games.cfb = json_response
 
                 let game_container = document.getElementById('userView');
