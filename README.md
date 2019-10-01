@@ -8,6 +8,7 @@ Pretty much still a WIP but getting more functional as I find time to work on it
 * [Bootstrap](https://getbootstrap.com/) - The CSS framework used
 * [Vanilla JS](http://vanilla-js.com/) - Client-side code
 * [College Football Data API](https://api.collegefootballdata.com/api/docs/?url=/api-docs.json#/) - Primary data source for now
+* [Flask](http://flask.palletsprojects.com/en/1.1.x/) - Python library for handling API calls
 * [Python Anywhere](https://www.pythonanywhere.com/) - API hosting
 
 ## License
@@ -17,3 +18,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Demo
 
 Check it out [here](https://www.tonysulfaro.com/sports-bets/)
+
+## Coming Soon
+- Webpack for payload minimization
+- Additional sports (as I find data sources)
