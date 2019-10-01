@@ -8,7 +8,8 @@ var SESSIONINFO = {
     },
     endpoints: {
         login: 'https://tony116523.pythonanywhere.com/login',
-        bet: 'https://tony116523.pythonanywhere.com/bet'
+        bet: 'https://tony116523.pythonanywhere.com/bet',
+        cfb_games: 'https://api.collegefootballdata.com/games?year=2019&seasonType=regular&week=3'
     }
 }
 
@@ -71,7 +72,7 @@ const Bets = function () {
                         // place user nav links into navbar when authenticated
                         var nav_bar_container = document.getElementById('navbarSupportedContent');
                         let nav_items = `<ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
+                        <li class="nav-item">
                             <a id="games-link" class="nav-link" href="#">Games <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
@@ -297,9 +298,8 @@ const Bets = function () {
     }
 
     function showGames() {
-        let url = 'https://api.collegefootballdata.com/games?year=2019&seasonType=regular&week=3';
 
-        fetch(url)
+        fetch(SESSIONINFO.endpoints.cfb_games)
             .then(function (response) {
                 return response.json();
             })

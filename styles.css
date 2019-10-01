@@ -17,8 +17,8 @@ h1 {
     text-align: right;
 }
 
-form button {
-    margin: 0 0 0 1em;
+#current-user {
+    margin-right: 1em;
 }
 
 .sticky-footer {
