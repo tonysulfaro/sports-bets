@@ -1,8 +1,13 @@
+body,
+html {
+    height: 100%;
+}
+
 body {
     background-image: linear-gradient(rgba(0, 0, 0, .7), rgba(0, 0, 0, .7)), url("images/football.jpg");
-    height: 100vh;
     background-position: center;
     background-repeat: no-repeat;
+    background-size: cover;
 }
 
 h1 {
@@ -35,10 +40,10 @@ h1 {
 
 /* temp */
 .login-form {
-    margin: 25vh auto;
+    margin: 30vh auto;
     max-width: 500px;
     padding: 2em;
     border-radius: 10px;
-    background-color: #353942;
+    background-color: #353942af;
     color: white;
 }

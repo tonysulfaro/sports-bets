@@ -66,20 +66,7 @@ const Bets = function () {
                         showGames();
                         showAlert('success', 'Login Sucessful');
 
-                        var login_form = document.getElementById('loginformnav');
-                        login_form.innerHTML = '';
-
                         // place user nav links into navbar when authenticated
-                        var nav_bar_container = document.getElementById('navbarSupportedContent');
-                        let nav_items = `<ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a id="games-link" class="nav-link" href="#">Games <span class="sr-only">(current)</span></a>
-                        </li>
-                        <li class="nav-item">
-                            <a id="standings-link" class="nav-link" href="#">My Standings</a>
-                        </li>
-                    </ul>`;
-                        nav_bar_container.insertAdjacentHTML('afterbegin', nav_items);
 
                         // remove main login form when logged in
                         var login_form_center = document.getElementById('loginform');
@@ -87,15 +74,30 @@ const Bets = function () {
 
                         // set background to white
                         document.body.style.background = 'none';
+                        // document.body.style.overflow = 'visible';
 
                         let current_user = json['Username'];
-                        let current_user_label = `<span id="current-user" class="navbar-text light">
-                ` + current_user + `</span>`;
-                        let logout_button = `<button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit"
-                    value="logout">Logout</button>`;
 
-                        login_form.insertAdjacentHTML('beforeend', current_user_label)
-                        login_form.insertAdjacentHTML('beforeend', logout_button)
+                        let nav_bar = `<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+                            <a class="navbar-brand" href="#">Sports Bet Tracker</a>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav mr-auto">
+                                            <li class="nav-item">
+                                                <a id="games-link" class="nav-link" href="#">Games <span class="sr-only">(current)</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a id="standings-link" class="nav-link" href="#">My Standings</a>
+                                            </li>
+                                        </ul>
+
+                                <form id="loginformnav" class="form-inline my-2 my-lg-0"><span id="current-user" class="navbar-text light">
+                                    ` + current_user + `</span><button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit" value="logout">Logout</button></form>
+                            </div>
+                        </nav>`;
+                        document.body.insertAdjacentHTML('afterbegin', nav_bar);
 
                     } else {
                         // display authentication error
