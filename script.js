@@ -283,18 +283,24 @@ const Bets = function () {
         }
 
         if (bet_type == 'over-under') {
-            let money_line_controls = ``;
+            let money_line_controls = `<div class="form-group">
+                                    <label for="over-under" class="col-form-label">Over Under:</label>
+                                    <input type="number" class="form-control" id="over-under">
+                                </div>`;
             setBetFormItems(money_line_controls);
 
         } else if (bet_type == 'money-line') {
             let money_line_controls = `<div class="form-group">
-                                    <label for="message-text" class="col-form-label">Money Line:</label>
+                                    <label for="money-line" class="col-form-label">Money Line:</label>
                                     <input type="number" class="form-control" id="money-line">
                                 </div>`;
             setBetFormItems(money_line_controls);
 
         } else if (bet_type == 'spread') {
-            let money_line_controls = ``;
+            let money_line_controls = `<div class="form-group">
+                                    <label for="spread" class="col-form-label">Spread:</label>
+                                    <input type="number" class="form-control" id="spread">
+                                </div>`;
             setBetFormItems(money_line_controls);
         }
     }
