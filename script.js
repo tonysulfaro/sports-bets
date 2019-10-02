@@ -9,7 +9,9 @@ var SESSIONINFO = {
     endpoints: {
         login: 'https://tony116523.pythonanywhere.com/login',
         bet: 'https://tony116523.pythonanywhere.com/bet',
-        cfb_games: 'https://api.collegefootballdata.com/games?year=2019&seasonType=regular&week=3'
+        cfb_games: {
+            games_this_week: `https://api.collegefootballdata.com/games?year=${new Date().getFullYear()}&seasonType=regular&week=6`
+        }
     }
 }
 
@@ -18,8 +20,6 @@ window.onload = function () {
 }
 
 const Bets = function () {
-
-
 
     installListeners();
 
@@ -307,7 +307,7 @@ const Bets = function () {
 
     function showGames() {
 
-        fetch(SESSIONINFO.endpoints.cfb_games)
+        fetch(SESSIONINFO.endpoints.cfb_games.games_this_week)
             .then(function (response) {
                 return response.json();
             })
@@ -319,7 +319,10 @@ const Bets = function () {
                 game_container.innerHTML = "";
 
                 //add game header
-                let game_header = `<h1>Games</h1>`;
+                let game_header = `<h1>Games</h1><select class="custom-select" id="sport-type-pick">
+                                    <option value="money-line">NCAA Football</option>
+                                    <option value="over-under">NFL</option>
+                                </select>`;
                 game_container.insertAdjacentHTML('beforeend', game_header);
 
                 json_response.forEach(element => {
@@ -327,29 +330,32 @@ const Bets = function () {
                     let game_id = element['id'];
                     let home_team = element['home_team'];
                     let away_team = element['away_team'];
-                    let start_date = element['start_date'];
                     let home_points = element['home_points'];
                     let away_points = element['away_points'];
 
+                    let start_date = new Date(Date.parse(element['start_date']));
+                    let start_year = start_date.getFullYear();
+                    let start_month = start_date.getMonth();
+                    let start_day = start_date.getDate();
+                    let start_hour = start_date.getHours();
+                    let start_minute = start_date.getMinutes();
+
                     var gameCard = `
-                            <div id="` + game_id + `"class="card">
-                            <div class="card-header">
-                                ` + away_team + ' at ' + home_team + `
-                            </div>
+                            <div id="${game_id}"class="card">
                             <div class="card-body">
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-sm-9">
-
-                                            <p>Start Time: ` + start_date + `</p>
-                                            <h3>Current Score</h3>
-                                            <p>` + home_team + " : " + home_points + `</p>
-                                            <p>` + away_team + " : " + away_points + `</p>
+                                            <p><strong>${away_team} at ${home_team}</strong></p>
+                                            <p>Start Time: ${start_month}/${start_day}/${start_year} at ${start_hour}:${start_minute}</p>
+                                            <p><i><strong>Current Score:</strong></i></p>
+                                            <p>${home_team}: ${home_points}</p>
+                                            <p>${away_team}: ${away_points}</p>
 
                                         </div>
                                         <div class="col-sm-3">
                                             <div class="card-actions">
-                                                <button id="place-bet" value="` + game_id + `" type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"
+                                                <button id="place-bet" value="${game_id}" type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"
                                                     data-whatever="@mdo">Place
                                                     Bet</button>
                                             </div>

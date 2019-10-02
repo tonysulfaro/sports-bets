@@ -14,9 +14,9 @@ h1 {
     margin: 2em 0 1em 0;
 }
 
-.card {
+/* .card {
     margin: 2em 0 2em 0;
-}
+} */
 
 .card-actions {
     text-align: right;
@@ -24,6 +24,10 @@ h1 {
 
 #current-user {
     margin-right: 1em;
+}
+
+#sport-type-pick {
+    margin-bottom: 2em;
 }
 
 .sticky-footer {
