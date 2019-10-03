@@ -10,7 +10,7 @@ var SESSIONINFO = {
         login: 'https://tony116523.pythonanywhere.com/login',
         bet: 'https://tony116523.pythonanywhere.com/bet',
         cfb_games: {
-            games_this_week: `https://api.collegefootballdata.com/games?year=${new Date().getFullYear()}&seasonType=regular&week=6`
+            games_this_week: `https://api.sportsdata.io/v3/cfb/odds/json/GameOddsByWeek/2019/6?key=be6928703873487fb703ca9ce13a6bc9`
         }
     }
 }
@@ -94,7 +94,7 @@ const Bets = function () {
                                         </ul>
 
                                 <form id="loginformnav" class="form-inline my-2 my-lg-0"><span id="current-user" class="navbar-text light">
-                                    ` + current_user + `</span><button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit" value="logout">Logout</button></form>
+                                    ${current_user}</span><button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit" value="logout">Logout</button></form>
                             </div>
                         </nav>`;
                         document.body.insertAdjacentHTML('afterbegin', nav_bar);
@@ -218,7 +218,7 @@ const Bets = function () {
                 standings_container.insertAdjacentHTML('beforeend', head);
                 standings_container.insertAdjacentHTML('beforeend', sample_table);
             }
-            // place bet clicked
+            // place bet on game list clicked
             else if (event.srcElement.id == 'place-bet') {
 
                 let game_id = event.srcElement.value;
@@ -234,7 +234,7 @@ const Bets = function () {
                 document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>${betting_game.home_team}</option>`);
                 document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>${betting_game.away_team}</option>`);
             }
-            // show message on bet placed
+            // confirm bet place on modal
             else if (event.srcElement.id == 'confirm-bet') {
                 // TODO: actually send request to place bet
                 showAlert('success', 'Bet Placed');
@@ -247,6 +247,12 @@ const Bets = function () {
             let bet_type = event.srcElement.value;
             updateBetForm(bet_type);
         });
+
+        // filter results on keydown in filter box
+        this.document.getElementById('game-filter').addEventListener('keydown', function (event) {
+            console.log(event);
+        })
+
     }
 
     function showAlert(alert_type, message) {
@@ -321,51 +327,124 @@ const Bets = function () {
                 let game_header = `<h1>Games</h1><select class="custom-select" id="sport-type-pick">
                                     <option value="money-line">NCAA Football</option>
                                     <option value="over-under">NFL</option>
-                                </select>`;
+                                </select><label for="basic-url">Filter Results:</label>
+                                <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon3">Game:</span>
+                                </div>
+                                <input type="text" class="form-control" id="game-filter" aria-describedby="basic-addon3">
+                                </div>`;
                 game_container.insertAdjacentHTML('beforeend', game_header);
 
                 json_response.forEach(element => {
 
-                    let game_id = element['id'];
-                    let home_team = element['home_team'];
-                    let away_team = element['away_team'];
-                    let home_points = element['home_points'];
-                    let away_points = element['away_points'];
+                    // game information
+                    let game_id = element.GameId;
+                    let home_team = element.HomeTeamName;
+                    let away_team = element.AwayTeamName;
+                    let home_points = element.HomeTeamScore;
+                    let away_points = element.AwayTeamScore;
 
-                    let start_date = new Date(Date.parse(element['start_date']));
+                    // date information
+                    let start_date = new Date(Date.parse(element.DateTime));
                     let start_year = start_date.getFullYear();
                     let start_month = start_date.getMonth();
                     let start_day = start_date.getDate();
                     let start_hour = start_date.getHours();
                     let start_minute = start_date.getMinutes();
 
-                    var gameCard = `
-                            <div id="${game_id}"class="card">
-                            <div class="card-body">
-                                <div class="container">
-                                    <div class="row">
-                                        <div class="col-sm-9">
-                                            <p><strong>${away_team} at ${home_team}</strong></p>
-                                            <p>Start Time: ${start_month}/${start_day}/${start_year} at ${start_hour}:${start_minute}</p>
-                                            <p><i><strong>Current Score:</strong></i></p>
-                                            <p>${home_team}: ${home_points}</p>
-                                            <p>${away_team}: ${away_points}</p>
+                    // odds information
+                    let latest_odds = element.PregameOdds[0];
+                    let home_money_line = latest_odds.HomeMoneyLine;
+                    let away_money_line = latest_odds.AwayMoneyLine;
+                    let home_point_spread = latest_odds.HomePointSpread;
+                    let away_point_spread = latest_odds.AwayPointSpread;
+                    let home_point_spread_payout = latest_odds.HomePointSpreadPayout;
+                    let away_point_spread_payout = latest_odds.AwayPointSpreadPayout;
+                    let over_under = latest_odds.OverUnder;
+                    let over_payout = latest_odds.OverPayout;
+                    let under_payout = latest_odds.UnderPayout;
 
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <div class="card-actions">
-                                                <button id="place-bet" value="${game_id}" type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal"
-                                                    data-whatever="@mdo">Place
-                                                    Bet</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                    var gameCard = `<div id="${game_id}" class="card">
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <p id="card-game-name"><strong>${away_team} at ${home_team}</strong></p>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <p>Start Time: ${start_month}/${start_day}/${start_year} at
+                                        ${start_hour}:${start_minute}
+                                    </p>
+                                    <p><i><strong>Current Score:</strong></i></p>
+                                    <p>${home_team}: ${home_points}</p>
+                                    <p>${away_team}: ${away_points}</p>
+                                </div>
+                                <div class="col-sm-6">
+                                    <table class="table table-borderless">
+                                        <thead>
+                                            <th scope="col">Odd Type</th>
+                                            <th scope="col">Value</th>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Home Money Line</td>
+                                                <td>${home_money_line}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Away Money Line</td>
+                                                <td>${away_money_line}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Home Point Spread</td>
+                                                <td>${home_point_spread}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Away Point Spread</td>
+                                                <td>${away_point_spread}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Home Point Spread Payout</td>
+                                                <td>${home_point_spread_payout}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Away Point Spread Payout</td>
+                                                <td>${away_point_spread_payout}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Over Under</td>
+                                                <td>${over_under}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Over Payout</td>
+                                                <td>${over_payout}</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Under Payout</td>
+                                                <td>${under_payout}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
                                 </div>
                             </div>
-                            </div>`;
+
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="card-actions">
+                                <button id="place-bet" value="${game_id}" type="button" class="btn btn-success"
+                                    data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Place
+                                    Bet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`;
                     game_container.insertAdjacentHTML('beforeend', gameCard);
 
                 });
             })
     }
+
 };
