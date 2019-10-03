@@ -62,6 +62,8 @@ const Bets = function () {
                     // only modify nav if authenticated
                     if (SESSIONINFO.authenticated) {
 
+                        // enable overflow on body
+                        document.body.style.overflow = "scroll";
                         // show games
                         showGames();
                         showAlert('success', 'Login Sucessful');
