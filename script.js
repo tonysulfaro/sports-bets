@@ -230,10 +230,9 @@ const Bets = function () {
                 $('#game-name').val(betting_game.away_team + ' at ' + betting_game.home_team);
 
                 // add winner pick options in form
-                document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>` + betting_game.away_team + `</option>`);
-                document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>` + betting_game.home_team + `</option>`);
-
-
+                document.getElementById('winner-pick').innerHTML = '';
+                document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>${betting_game.home_team}</option>`);
+                document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>${betting_game.away_team}</option>`);
             }
             // show message on bet placed
             else if (event.srcElement.id == 'confirm-bet') {
