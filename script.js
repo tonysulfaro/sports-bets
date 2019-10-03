@@ -223,11 +223,11 @@ const Bets = function () {
 
                 let game_id = event.srcElement.value;
                 let betting_game = SESSIONINFO.games.cfb.find(function (element) {
-                    return element['id'] == game_id;
+                    return element['GameId'] == game_id;
                 });
 
                 // set game name in bet form
-                $('#game-name').val(betting_game.away_team + ' at ' + betting_game.home_team);
+                $('#game-name').val(betting_game.AwayTeamName + ' at ' + betting_game.HomeTeamName);
 
                 // add winner pick options in form
                 document.getElementById('winner-pick').innerHTML = '';
