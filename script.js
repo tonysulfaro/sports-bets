@@ -8,6 +8,7 @@ var SESSIONINFO = {
     },
     endpoints: {
         login: 'https://tony116523.pythonanywhere.com/login',
+        token: 'https://tony116523.pythonanywhere.com/token',
         bet: 'https://tony116523.pythonanywhere.com/bet',
         cfb_games: {
             games_this_week: `https://api.sportsdata.io/v3/cfb/odds/json/GameOddsByWeek/2019/6?key=be6928703873487fb703ca9ce13a6bc9`
@@ -17,6 +18,22 @@ var SESSIONINFO = {
 
 window.onload = function () {
     new Bets();
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
 }
 
 const Bets = function () {
@@ -58,6 +75,8 @@ const Bets = function () {
                     SESSIONINFO.authenticated = json['Authenticated'];
                     SESSIONINFO.username = json['Username'];
                     SESSIONINFO.token = json['Token'];
+
+                    document.cookie = `token=${SESSIONINFO.token}`;
 
                     // only modify nav if authenticated
                     if (SESSIONINFO.authenticated) {
@@ -233,8 +252,8 @@ const Bets = function () {
 
                 // add winner pick options in form
                 document.getElementById('winner-pick').innerHTML = '';
-                document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>${betting_game.home_team}</option>`);
-                document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>${betting_game.away_team}</option>`);
+                document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>${betting_game.AwayTeamName}</option>`);
+                document.getElementById('winner-pick').insertAdjacentHTML('beforeend', `<option selected>${betting_game.HomeTeamName}</option>`);
             }
             // confirm bet place on modal
             else if (event.srcElement.id == 'confirm-bet') {
@@ -307,6 +326,10 @@ const Bets = function () {
         }
     }
 
+    function hideLoginPage() {
+
+    }
+
     function showGames() {
 
         fetch(SESSIONINFO.endpoints.cfb_games.games_this_week)
@@ -345,7 +368,8 @@ const Bets = function () {
                     // date information
                     let start_date = new Date(Date.parse(element.DateTime));
                     let start_year = start_date.getFullYear();
-                    let start_month = start_date.getMonth();
+                    // TODO: look into this
+                    let start_month = start_date.getMonth() + 1;
                     let start_day = start_date.getDate();
                     let start_hour = start_date.getHours();
                     let start_minute = start_date.getMinutes();
@@ -385,27 +409,27 @@ const Bets = function () {
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td>Home Money Line</td>
+                                                <td>${home_team} Money Line</td>
                                                 <td>${home_money_line}</td>
                                             </tr>
                                             <tr>
-                                                <td>Away Money Line</td>
+                                                <td>${away_team} Money Line</td>
                                                 <td>${away_money_line}</td>
                                             </tr>
                                             <tr>
-                                                <td>Home Point Spread</td>
+                                                <td>${home_team} Point Spread</td>
                                                 <td>${home_point_spread}</td>
                                             </tr>
                                             <tr>
-                                                <td>Away Point Spread</td>
+                                                <td>${away_team} Point Spread</td>
                                                 <td>${away_point_spread}</td>
                                             </tr>
                                             <tr>
-                                                <td>Home Point Spread Payout</td>
+                                                <td>${home_team} Point Spread Payout</td>
                                                 <td>${home_point_spread_payout}</td>
                                             </tr>
                                             <tr>
-                                                <td>Away Point Spread Payout</td>
+                                                <td>${away_team} Point Spread Payout</td>
                                                 <td>${away_point_spread_payout}</td>
                                             </tr>
                                             <tr>
