@@ -248,11 +248,6 @@ const Bets = function () {
             updateBetForm(bet_type);
         });
 
-        // filter results on keydown in filter box
-        this.document.getElementById('game-filter').addEventListener('keydown', function (event) {
-            console.log(event);
-        })
-
     }
 
     function showAlert(alert_type, message) {
@@ -444,6 +439,30 @@ const Bets = function () {
                     game_container.insertAdjacentHTML('beforeend', gameCard);
 
                 });
+
+                // filter results on keydown in filter box
+                this.document.getElementById('game-filter').addEventListener('keyup', function (event) {
+                    console.log(event);
+
+                    let input = document.getElementById('game-filter');
+                    let filter = input.value.toUpperCase();
+                    let game_container = document.getElementById('userView');
+                    let cards = game_container.getElementsByClassName('card');
+
+                    console.log(cards);
+
+                    for (i = 0; i < cards.length; i++) {
+                        let title = cards[i].getElementsByTagName("p")[0]
+                        let text_value = title.innerText || title.textContent;
+
+                        // change visibility if it matches search query
+                        if (text_value.toUpperCase().indexOf(filter) > -1) {
+                            cards[i].style.display = "";
+                        } else {
+                            cards[i].style.display = "none";
+                        }
+                    }
+                })
             })
     }
 
