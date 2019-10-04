@@ -11,7 +11,8 @@ var SESSIONINFO = {
         token: 'https://tony116523.pythonanywhere.com/token',
         bet: 'https://tony116523.pythonanywhere.com/bet',
         cfb_games: {
-            games_this_week: `https://api.sportsdata.io/v3/cfb/odds/json/GameOddsByWeek/2019/6?key=be6928703873487fb703ca9ce13a6bc9`
+            game_odds_week: `https://api.sportsdata.io/v3/cfb/odds/json/GameOddsByWeek/2019/6?key=be6928703873487fb703ca9ce13a6bc9`,
+            game_scores_week: `https://api.sportsdata.io/v3/cfb/scores/json/GamesByWeek/2019/6?key=be6928703873487fb703ca9ce13a6bc9`
         }
     }
 }
@@ -332,7 +333,7 @@ const Bets = function () {
 
     function showGames() {
 
-        fetch(SESSIONINFO.endpoints.cfb_games.games_this_week)
+        fetch(SESSIONINFO.endpoints.cfb_games.game_odds_week)
             .then(function (response) {
                 return response.json();
             })
@@ -356,37 +357,46 @@ const Bets = function () {
                                 </div>`;
                 game_container.insertAdjacentHTML('beforeend', game_header);
 
-                json_response.forEach(element => {
 
-                    // game information
-                    let game_id = element.GameId;
-                    let home_team = element.HomeTeamName;
-                    let away_team = element.AwayTeamName;
-                    let home_points = element.HomeTeamScore;
-                    let away_points = element.AwayTeamScore;
+                // get latest scores for games
+                fetch(SESSIONINFO.endpoints.cfb_games.game_scores_week)
+                    .then(function (score_response) {
+                        return score_response.json();
+                    })
+                    .then(function (score_json_response) {
 
-                    // date information
-                    let start_date = new Date(Date.parse(element.DateTime));
-                    let start_year = start_date.getFullYear();
-                    // TODO: look into this
-                    let start_month = start_date.getMonth() + 1;
-                    let start_day = start_date.getDate();
-                    let start_hour = start_date.getHours();
-                    let start_minute = start_date.getMinutes();
+                        json_response.forEach(element => {
 
-                    // odds information
-                    let latest_odds = element.PregameOdds[0];
-                    let home_money_line = latest_odds.HomeMoneyLine;
-                    let away_money_line = latest_odds.AwayMoneyLine;
-                    let home_point_spread = latest_odds.HomePointSpread;
-                    let away_point_spread = latest_odds.AwayPointSpread;
-                    let home_point_spread_payout = latest_odds.HomePointSpreadPayout;
-                    let away_point_spread_payout = latest_odds.AwayPointSpreadPayout;
-                    let over_under = latest_odds.OverUnder;
-                    let over_payout = latest_odds.OverPayout;
-                    let under_payout = latest_odds.UnderPayout;
+                            // game information
+                            let game_id = element.GameId;
+                            let home_team = element.HomeTeamName;
+                            let away_team = element.AwayTeamName;
+                            // use score data to link fields together on GameID
+                            let home_points = score_json_response.filter(game => game.GameID == game_id)[0].HomeTeamScore;
+                            let away_points = score_json_response.filter(game => game.GameID == game_id)[0].AwayTeamScore;
 
-                    var gameCard = `<div id="${game_id}" class="card">
+                            // date information
+                            let start_date = new Date(Date.parse(element.DateTime));
+                            let start_year = start_date.getFullYear();
+                            // TODO: look into this
+                            let start_month = start_date.getMonth() + 1;
+                            let start_day = start_date.getDate();
+                            let start_hour = start_date.getHours();
+                            let start_minute = start_date.getMinutes();
+
+                            // odds information
+                            let latest_odds = element.PregameOdds[0];
+                            let home_money_line = latest_odds.HomeMoneyLine;
+                            let away_money_line = latest_odds.AwayMoneyLine;
+                            let home_point_spread = latest_odds.HomePointSpread;
+                            let away_point_spread = latest_odds.AwayPointSpread;
+                            let home_point_spread_payout = latest_odds.HomePointSpreadPayout;
+                            let away_point_spread_payout = latest_odds.AwayPointSpreadPayout;
+                            let over_under = latest_odds.OverUnder;
+                            let over_payout = latest_odds.OverPayout;
+                            let under_payout = latest_odds.UnderPayout;
+
+                            var gameCard = `<div id="${game_id}" class="card">
             <div class="card-body">
                 <div class="container">
                     <div class="row">
@@ -462,9 +472,10 @@ const Bets = function () {
                 </div>
             </div>
         </div>`;
-                    game_container.insertAdjacentHTML('beforeend', gameCard);
+                            game_container.insertAdjacentHTML('beforeend', gameCard);
 
-                });
+                        });
+                    })
 
                 // filter results on keydown in filter box
                 this.document.getElementById('game-filter').addEventListener('keyup', function (event) {
