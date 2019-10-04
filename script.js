@@ -374,15 +374,8 @@ const Bets = function () {
                             // use score data to link fields together on GameID
                             let home_points = score_json_response.filter(game => game.GameID == game_id)[0].HomeTeamScore;
                             let away_points = score_json_response.filter(game => game.GameID == game_id)[0].AwayTeamScore;
-
                             // date information
-                            let start_date = new Date(Date.parse(element.DateTime));
-                            let start_year = start_date.getFullYear();
-                            // TODO: look into this
-                            let start_month = start_date.getMonth() + 1;
-                            let start_day = start_date.getDate();
-                            let start_hour = start_date.getHours();
-                            let start_minute = start_date.getMinutes();
+                            let start_date = new Date(Date.parse(element.DateTime)).toLocaleString();
 
                             // odds information
                             let latest_odds = element.PregameOdds[0];
@@ -404,8 +397,7 @@ const Bets = function () {
                             <p id="card-game-name"><strong>${away_team} at ${home_team}</strong></p>
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <p>Start Time: ${start_month}/${start_day}/${start_year} at
-                                        ${start_hour}:${start_minute}
+                                    <p>Start Time: ${start_date}
                                     </p>
                                     <p><i><strong>Current Score:</strong></i></p>
                                     <p>${home_team}: ${home_points}</p>
