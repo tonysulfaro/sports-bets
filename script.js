@@ -390,80 +390,80 @@ const Bets = function () {
                             let under_payout = latest_odds.UnderPayout;
 
                             var gameCard = `<div id="${game_id}" class="card">
-            <div class="card-body">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-sm-9">
-                            <p id="card-game-name"><strong>${away_team} at ${home_team}</strong></p>
-                            <div class="row">
-                                <div class="col-sm-6">
-                                    <p>Start Time: ${start_date}
-                                    </p>
-                                    <p><i><strong>Current Score:</strong></i></p>
-                                    <p>${home_team}: ${home_points}</p>
-                                    <p>${away_team}: ${away_points}</p>
-                                </div>
-                                <div class="col-sm-6">
-                                    <table class="table table-borderless">
-                                        <thead>
-                                            <th scope="col">Odd Type</th>
-                                            <th scope="col">Value</th>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>${home_team} Money Line</td>
-                                                <td>${home_money_line}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>${away_team} Money Line</td>
-                                                <td>${away_money_line}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>${home_team} Point Spread</td>
-                                                <td>${home_point_spread}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>${away_team} Point Spread</td>
-                                                <td>${away_point_spread}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>${home_team} Point Spread Payout</td>
-                                                <td>${home_point_spread_payout}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>${away_team} Point Spread Payout</td>
-                                                <td>${away_point_spread_payout}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Over Under</td>
-                                                <td>${over_under}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Over Payout</td>
-                                                <td>${over_payout}</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Under Payout</td>
-                                                <td>${under_payout}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                <div class="card-body">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-sm-9">
+                                                <p id="card-game-name"><strong>${away_team} at ${home_team}</strong></p>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <p>${start_date}
+                                                        </p>
+                                                        <p><i><strong>Current Score:</strong></i></p>
+                                                        <p>${home_team}: ${home_points}</p>
+                                                        <p>${away_team}: ${away_points}</p>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <table class="table table-borderless">
+                                                            <thead>
+                                                                <th scope="col">Odd Type</th>
+                                                                <th scope="col">Value</th>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>${home_team} Money Line</td>
+                                                                    <td>${home_money_line}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>${away_team} Money Line</td>
+                                                                    <td>${away_money_line}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>${home_team} Point Spread</td>
+                                                                    <td>${home_point_spread}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>${away_team} Point Spread</td>
+                                                                    <td>${away_point_spread}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>${home_team} Point Spread Payout</td>
+                                                                    <td>${home_point_spread_payout}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>${away_team} Point Spread Payout</td>
+                                                                    <td>${away_point_spread_payout}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Over Under</td>
+                                                                    <td>${over_under}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Over Payout</td>
+                                                                    <td>${over_payout}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Under Payout</td>
+                                                                    <td>${under_payout}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
 
-                                </div>
-                            </div>
+                                                    </div>
+                                                </div>
 
-                        </div>
-                        <div class="col-sm-3">
-                            <div class="card-actions">
-                                <button id="place-bet" value="${game_id}" type="button" class="btn btn-success"
-                                    data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Place
-                                    Bet</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>`;
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="card-actions">
+                                                    <button id="place-bet" value="${game_id}" type="button" class="btn btn-success"
+                                                        data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Place
+                                                        Bet</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
                             game_container.insertAdjacentHTML('beforeend', gameCard);
 
                         });
