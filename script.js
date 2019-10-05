@@ -26,7 +26,9 @@ function signOut() {
     });
 }
 
-function onSignIn(googleUser) {
+function onSuccess(googleUser) {
+    console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+
     var profile = googleUser.getBasicProfile();
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     console.log('Name: ' + profile.getName());
@@ -46,12 +48,9 @@ function onSignIn(googleUser) {
     removeLoginScreen();
 }
 
-function onSuccess(googleUser) {
-    console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-}
-
 function onFailure(error) {
     console.log(error);
+    showAlert('failure', error.details);
 }
 
 function renderButton() {
