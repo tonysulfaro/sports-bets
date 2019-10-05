@@ -23,6 +23,63 @@ function onSignIn(googleUser) {
     console.log('Name: ' + profile.getName());
     console.log('Image URL: ' + profile.getImageUrl());
     console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+    // update global
+    SESSIONINFO.authenticated = true;
+    SESSIONINFO.username = profile.getEmail();
+    SESSIONINFO.token = 'some token for later';
+
+    document.cookie = `token=${SESSIONINFO.token}`;
+
+    // only modify nav if authenticated
+    if (SESSIONINFO.authenticated) {
+
+        var login_form_center = document.getElementById('loginform');
+
+        // enable overflow on body
+        document.body.style.overflow = "scroll";
+        // show games
+        showGames();
+        showAlert('success', 'Login Sucessful');
+
+        // place user nav links into navbar when authenticated
+
+        // remove main login form when logged in
+        login_form_center.parentElement.removeChild(login_form_center);
+
+        // set background to white
+        document.body.style.background = 'none';
+        // document.body.style.overflow = 'visible';
+
+        let current_user = json['Username'];
+
+        let nav_bar = `<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+                            <a class="navbar-brand" href="#">Sports Bet Tracker</a>
+                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav mr-auto">
+                                            <li class="nav-item">
+                                                <a id="games-link" class="nav-link" href="#">Games <span class="sr-only">(current)</span></a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a id="standings-link" class="nav-link" href="#">My Standings</a>
+                                            </li>
+                                        </ul>
+
+                                <form id="loginformnav" class="form-inline my-2 my-lg-0"><span id="current-user" class="navbar-text light">
+                                    ${current_user}</span><button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit" value="logout">Logout</button></form>
+                            </div>
+                        </nav>`;
+        document.body.insertAdjacentHTML('afterbegin', nav_bar);
+
+    } else {
+        // display authentication error
+        showAlert('failure', 'Login Failed');
+        // remove spinner
+        document.getElementById('loading-spinner').parentElement.removeChild(document.getElementById('loading-spinner'));
+    }
 }
 
 window.onload = function () {
