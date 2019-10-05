@@ -53,7 +53,7 @@ function onSignIn(googleUser) {
         document.body.style.background = 'none';
         // document.body.style.overflow = 'visible';
 
-        let current_user = json['Username'];
+        let current_user = profile.getEmail();
 
         let nav_bar = `<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
                             <a class="navbar-brand" href="#">Sports Bet Tracker</a>
