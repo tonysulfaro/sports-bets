@@ -5,17 +5,20 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <!-- signin with google -->
+    <meta name="google-signin-client_id"
+        content="69537239423-1nn78t5k7gm2nlgaftcmi6f4ut9rcr2i.apps.googleusercontent.com">
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <link rel="shortcut icon"
+        href="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/google/223/american-football_1f3c8.png">
     <link rel="stylesheet" href="styles.css">
     <title>Sports Bets</title>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">Sports Bet Tracker</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,9 +30,44 @@
             <form id="loginformnav" class="form-inline my-2 my-lg-0">
             </form>
         </div>
-    </nav>
+    </nav> -->
 
     <div class="container">
+
+
+        <!-- <div id="${game_id}" class="card">
+            <div class="card-body">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <p id="card-game-name"><strong>${away_team} at ${home_team}</strong></p>
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <p>Start Time: ${start_month}/${start_day}/${start_year} at
+                                        ${start_hour}:${start_minute}
+                                    </p>
+                                    <p><i><strong>Current Score:</strong></i></p>
+                                    <p>${home_team}: ${home_points}</p>
+                                    <p>${away_team}: ${away_points}</p>
+                                </div>
+                                <div class="col-sm-3">
+                                    <p>Pre-Game Odds:</p>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="card-actions">
+                                <button id="place-bet" value="${game_id}" type="button" class="btn btn-success"
+                                    data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Place
+                                    Bet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
 
         <!-- sample button thing with modal form -->
         <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -96,6 +134,12 @@
 
         <form id="loginform" class="login-form">
             <div class="form-group">
+                <div id="my-signin2"></div>
+            </div>
+            <div class="form-group">
+                <p><strong>or login with email</strong></p>
+            </div>
+            <div class="form-group">
                 <label for="username-input">Email address</label>
                 <input id="username-input" type="email" class="form-control" placeholder="Enter email">
             </div>
@@ -107,39 +151,15 @@
                 <button id="login-button" type="submit" value="login" class="btn btn-primary">Login</button>
                 <button id="signup-button" type="submit" value="signup" class="btn btn-primary">Signup</button>
             </div>
+
             <small>For a demo just login with username = asdf, password = asdf</small>
         </form>
 
         <div id="userView">
 
-
         </div>
 
         <div id="games">
-
-            <!-- <div class="card">
-                <div class="card-header">
-                    Ohio State at Michigan
-                </div>
-                <div class="card-body">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-sm-9">
-
-                                <p>Date/Time: </p>
-                                <p>Current Score:</p>
-                                <p>Venue: Michigan Stadium</p>
-
-                            </div>
-                            <div class="col-sm-3">
-                                <div class="card-actions">
-                                    <button type="button" class="btn btn-success">Place Bet</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
 
         </div>
 
@@ -175,7 +195,7 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
     </script>
     <script src="script.js"></script>
-
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
 </body>
 
 </html>
