@@ -45,7 +45,9 @@ function onSignIn(googleUser) {
         // place user nav links into navbar when authenticated
 
         // remove main login form when logged in
+        console.log(login_form_center);
         login_form_center.parentElement.removeChild(login_form_center);
+        console.log(login_form_center);
 
         // set background to white
         document.body.style.background = 'none';
@@ -252,6 +254,61 @@ function showGames() {
                 }
             })
         })
+}
+
+function showAlert(alert_type, message) {
+
+    // hide alerts if present
+    $('#failure-alert').hide();
+    $('#success-alert').hide();
+
+
+    if (alert_type == 'success') {
+        $('#success-alert-text').text(message);
+        $('#success-alert').show();
+
+        // hide alert after time
+        setInterval(function () {
+            $('#success-alert').hide();
+        }, 4000);
+
+    } else if (alert_type == 'failure') {
+        $('#failure-alert-text').text(message);
+        $('#failure-alert').show();
+        // users must manually dismiss error messages
+    }
+}
+
+function updateBetForm(bet_type) {
+
+    let bet_form_controls = document.getElementById('bet-type-items');
+
+    function setBetFormItems(money_line_controls) {
+        bet_form_controls.innerHTML = '';
+        bet_form_controls.insertAdjacentHTML('beforeend', money_line_controls)
+    }
+
+    if (bet_type == 'over-under') {
+        let money_line_controls = `<div class="form-group">
+                                    <label for="over-under" class="col-form-label">Over Under:</label>
+                                    <input type="number" class="form-control" id="over-under">
+                                </div>`;
+        setBetFormItems(money_line_controls);
+
+    } else if (bet_type == 'money-line') {
+        let money_line_controls = `<div class="form-group">
+                                    <label for="money-line" class="col-form-label">Money Line:</label>
+                                    <input type="number" class="form-control" id="money-line">
+                                </div>`;
+        setBetFormItems(money_line_controls);
+
+    } else if (bet_type == 'spread') {
+        let money_line_controls = `<div class="form-group">
+                                    <label for="spread" class="col-form-label">Spread:</label>
+                                    <input type="number" class="form-control" id="spread">
+                                </div>`;
+        setBetFormItems(money_line_controls);
+    }
 }
 
 window.onload = function () {
@@ -521,63 +578,5 @@ const Bets = function () {
 
     }
 
-    function showAlert(alert_type, message) {
-
-        // hide alerts if present
-        $('#failure-alert').hide();
-        $('#success-alert').hide();
-
-
-        if (alert_type == 'success') {
-            $('#success-alert-text').text(message);
-            $('#success-alert').show();
-
-            // hide alert after time
-            setInterval(function () {
-                $('#success-alert').hide();
-            }, 4000);
-
-        } else if (alert_type == 'failure') {
-            $('#failure-alert-text').text(message);
-            $('#failure-alert').show();
-            // users must manually dismiss error messages
-        }
-    }
-
-    function updateBetForm(bet_type) {
-
-        let bet_form_controls = document.getElementById('bet-type-items');
-
-        function setBetFormItems(money_line_controls) {
-            bet_form_controls.innerHTML = '';
-            bet_form_controls.insertAdjacentHTML('beforeend', money_line_controls)
-        }
-
-        if (bet_type == 'over-under') {
-            let money_line_controls = `<div class="form-group">
-                                    <label for="over-under" class="col-form-label">Over Under:</label>
-                                    <input type="number" class="form-control" id="over-under">
-                                </div>`;
-            setBetFormItems(money_line_controls);
-
-        } else if (bet_type == 'money-line') {
-            let money_line_controls = `<div class="form-group">
-                                    <label for="money-line" class="col-form-label">Money Line:</label>
-                                    <input type="number" class="form-control" id="money-line">
-                                </div>`;
-            setBetFormItems(money_line_controls);
-
-        } else if (bet_type == 'spread') {
-            let money_line_controls = `<div class="form-group">
-                                    <label for="spread" class="col-form-label">Spread:</label>
-                                    <input type="number" class="form-control" id="spread">
-                                </div>`;
-            setBetFormItems(money_line_controls);
-        }
-    }
-
-    function hideLoginPage() {
-
-    }
 
 };
