@@ -83,9 +83,7 @@ function removeLoginScreen() {
         // place user nav links into navbar when authenticated
 
         // remove main login form when logged in
-        console.log(login_form_center);
         login_form_center.parentElement.removeChild(login_form_center);
-        console.log(login_form_center);
 
         // set background to white
         document.body.style.background = 'none';
@@ -160,8 +158,8 @@ function showGames() {
                                 </div>
                                 <input type="text" class="form-control" id="game-filter" aria-describedby="basic-addon3">
                                 </div>`;
-            game_container.insertAdjacentHTML('beforeend', game_header);
 
+            game_container.insertAdjacentHTML('beforeend', game_header);
 
             // get latest scores for games
             fetch(SESSIONINFO.endpoints.cfb_games.game_scores_week)
@@ -171,6 +169,13 @@ function showGames() {
                 .then(function (score_json_response) {
 
                     json_response.forEach(element => {
+
+                        // show only games that aren't over yet
+                        if (element.Status == "Final" || element.Status == "F/OT") {
+                            return;
+                        }
+
+                        console.log(element.Status);
 
                         // game information
                         let game_id = element.GameId;
