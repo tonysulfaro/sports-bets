@@ -53,6 +53,15 @@ const Bets = function () {
                 let form_username = document.getElementById('username-input').value;
                 let form_password = document.getElementById('password-input').value;
 
+                // show spinner on button press
+                var login_form_center = document.getElementById('loginform');
+                let loading_spinner = `<div id="loading-spinner" class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>`;
+                login_form_center.insertAdjacentHTML('beforeend', loading_spinner);
+
                 // payload for login to endpoint
                 let payload = {
                     username: form_username,
@@ -91,7 +100,6 @@ const Bets = function () {
                         // place user nav links into navbar when authenticated
 
                         // remove main login form when logged in
-                        var login_form_center = document.getElementById('loginform');
                         login_form_center.parentElement.removeChild(login_form_center);
 
                         // set background to white
@@ -124,10 +132,14 @@ const Bets = function () {
                     } else {
                         // display authentication error
                         showAlert('failure', 'Login Failed');
+                        // remove spinner
+                        document.getElementById('loading-spinner').parentElement.removeChild(document.getElementById('loading-spinner'));
                     }
 
                 } catch (error) {
                     console.error('Error:', error);
+                    showAlert('failure', 'Something Went Wrong');
+                    document.getElementById('loading-spinner').parentElement.removeChild(document.getElementById('loading-spinner'));
                 }
             }
             // signup button clicked
@@ -332,6 +344,14 @@ const Bets = function () {
     }
 
     function showGames() {
+
+        let loading_spinner = `<div id="loading-spinner" class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>`;
+
+        document.getElementById('userView').insertAdjacentHTML('beforeend', loading_spinner);
 
         fetch(SESSIONINFO.endpoints.cfb_games.game_odds_week)
             .then(function (response) {
