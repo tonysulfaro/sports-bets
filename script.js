@@ -82,6 +82,178 @@ function onSignIn(googleUser) {
     }
 }
 
+function showGames() {
+
+    let loading_spinner = `<div id="loading-spinner" class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>`;
+
+    document.getElementById('userView').insertAdjacentHTML('beforeend', loading_spinner);
+
+    fetch(SESSIONINFO.endpoints.cfb_games.game_odds_week)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (json_response) {
+
+            SESSIONINFO.games.cfb = json_response
+
+            let game_container = document.getElementById('userView');
+            game_container.innerHTML = "";
+
+            //add game header
+            let game_header = `<h1>Games</h1><select class="custom-select" id="sport-type-pick">
+                                    <option value="money-line">NCAA Football</option>
+                                    <option value="over-under">NFL</option>
+                                </select><label for="basic-url">Filter Results:</label>
+                                <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="basic-addon3">Game:</span>
+                                </div>
+                                <input type="text" class="form-control" id="game-filter" aria-describedby="basic-addon3">
+                                </div>`;
+            game_container.insertAdjacentHTML('beforeend', game_header);
+
+
+            // get latest scores for games
+            fetch(SESSIONINFO.endpoints.cfb_games.game_scores_week)
+                .then(function (score_response) {
+                    return score_response.json();
+                })
+                .then(function (score_json_response) {
+
+                    json_response.forEach(element => {
+
+                        // game information
+                        let game_id = element.GameId;
+                        let home_team = element.HomeTeamName;
+                        let away_team = element.AwayTeamName;
+                        // use score data to link fields together on GameID
+                        let home_points = score_json_response.filter(game => game.GameID == game_id)[0].HomeTeamScore;
+                        let away_points = score_json_response.filter(game => game.GameID == game_id)[0].AwayTeamScore;
+                        // date information
+                        let start_date = new Date(Date.parse(element.DateTime)).toLocaleString();
+
+                        // odds information
+                        let latest_odds = element.PregameOdds[0];
+                        let home_money_line = latest_odds.HomeMoneyLine;
+                        let away_money_line = latest_odds.AwayMoneyLine;
+                        let home_point_spread = latest_odds.HomePointSpread;
+                        let away_point_spread = latest_odds.AwayPointSpread;
+                        let home_point_spread_payout = latest_odds.HomePointSpreadPayout;
+                        let away_point_spread_payout = latest_odds.AwayPointSpreadPayout;
+                        let over_under = latest_odds.OverUnder;
+                        let over_payout = latest_odds.OverPayout;
+                        let under_payout = latest_odds.UnderPayout;
+
+                        var gameCard = `<div id="${game_id}" class="card">
+                                <div class="card-body">
+                                    <div class="container">
+                                        <div class="row">
+                                            <div class="col-sm-9">
+                                                <p id="card-game-name"><strong>${away_team} at ${home_team}</strong></p>
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <p>${start_date}
+                                                        </p>
+                                                        <p><i><strong>Current Score:</strong></i></p>
+                                                        <p>${home_team}: ${home_points}</p>
+                                                        <p>${away_team}: ${away_points}</p>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <table class="table table-borderless">
+                                                            <thead>
+                                                                <th scope="col">Odd Type</th>
+                                                                <th scope="col">Value</th>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>${home_team} Money Line</td>
+                                                                    <td>${home_money_line}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>${away_team} Money Line</td>
+                                                                    <td>${away_money_line}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>${home_team} Point Spread</td>
+                                                                    <td>${home_point_spread}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>${away_team} Point Spread</td>
+                                                                    <td>${away_point_spread}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>${home_team} Point Spread Payout</td>
+                                                                    <td>${home_point_spread_payout}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>${away_team} Point Spread Payout</td>
+                                                                    <td>${away_point_spread_payout}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Over Under</td>
+                                                                    <td>${over_under}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Over Payout</td>
+                                                                    <td>${over_payout}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Under Payout</td>
+                                                                    <td>${under_payout}</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-sm-3">
+                                                <div class="card-actions">
+                                                    <button id="place-bet" value="${game_id}" type="button" class="btn btn-success"
+                                                        data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Place
+                                                        Bet</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        game_container.insertAdjacentHTML('beforeend', gameCard);
+
+                    });
+                })
+
+            // filter results on keydown in filter box
+            this.document.getElementById('game-filter').addEventListener('keyup', function (event) {
+                console.log(event);
+
+                let input = document.getElementById('game-filter');
+                let filter = input.value.toUpperCase();
+                let game_container = document.getElementById('userView');
+                let cards = game_container.getElementsByClassName('card');
+
+                console.log(cards);
+
+                for (i = 0; i < cards.length; i++) {
+                    let title = cards[i].getElementsByTagName("p")[0]
+                    let text_value = title.innerText || title.textContent;
+
+                    // change visibility if it matches search query
+                    if (text_value.toUpperCase().indexOf(filter) > -1) {
+                        cards[i].style.display = "";
+                    } else {
+                        cards[i].style.display = "none";
+                    }
+                }
+            })
+        })
+}
+
 window.onload = function () {
     new Bets();
 }
@@ -406,178 +578,6 @@ const Bets = function () {
 
     function hideLoginPage() {
 
-    }
-
-    function showGames() {
-
-        let loading_spinner = `<div id="loading-spinner" class="d-flex justify-content-center">
-                    <div class="spinner-border" role="status">
-                        <span class="sr-only">Loading...</span>
-                    </div>
-                </div>`;
-
-        document.getElementById('userView').insertAdjacentHTML('beforeend', loading_spinner);
-
-        fetch(SESSIONINFO.endpoints.cfb_games.game_odds_week)
-            .then(function (response) {
-                return response.json();
-            })
-            .then(function (json_response) {
-
-                SESSIONINFO.games.cfb = json_response
-
-                let game_container = document.getElementById('userView');
-                game_container.innerHTML = "";
-
-                //add game header
-                let game_header = `<h1>Games</h1><select class="custom-select" id="sport-type-pick">
-                                    <option value="money-line">NCAA Football</option>
-                                    <option value="over-under">NFL</option>
-                                </select><label for="basic-url">Filter Results:</label>
-                                <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon3">Game:</span>
-                                </div>
-                                <input type="text" class="form-control" id="game-filter" aria-describedby="basic-addon3">
-                                </div>`;
-                game_container.insertAdjacentHTML('beforeend', game_header);
-
-
-                // get latest scores for games
-                fetch(SESSIONINFO.endpoints.cfb_games.game_scores_week)
-                    .then(function (score_response) {
-                        return score_response.json();
-                    })
-                    .then(function (score_json_response) {
-
-                        json_response.forEach(element => {
-
-                            // game information
-                            let game_id = element.GameId;
-                            let home_team = element.HomeTeamName;
-                            let away_team = element.AwayTeamName;
-                            // use score data to link fields together on GameID
-                            let home_points = score_json_response.filter(game => game.GameID == game_id)[0].HomeTeamScore;
-                            let away_points = score_json_response.filter(game => game.GameID == game_id)[0].AwayTeamScore;
-                            // date information
-                            let start_date = new Date(Date.parse(element.DateTime)).toLocaleString();
-
-                            // odds information
-                            let latest_odds = element.PregameOdds[0];
-                            let home_money_line = latest_odds.HomeMoneyLine;
-                            let away_money_line = latest_odds.AwayMoneyLine;
-                            let home_point_spread = latest_odds.HomePointSpread;
-                            let away_point_spread = latest_odds.AwayPointSpread;
-                            let home_point_spread_payout = latest_odds.HomePointSpreadPayout;
-                            let away_point_spread_payout = latest_odds.AwayPointSpreadPayout;
-                            let over_under = latest_odds.OverUnder;
-                            let over_payout = latest_odds.OverPayout;
-                            let under_payout = latest_odds.UnderPayout;
-
-                            var gameCard = `<div id="${game_id}" class="card">
-                                <div class="card-body">
-                                    <div class="container">
-                                        <div class="row">
-                                            <div class="col-sm-9">
-                                                <p id="card-game-name"><strong>${away_team} at ${home_team}</strong></p>
-                                                <div class="row">
-                                                    <div class="col-sm-6">
-                                                        <p>${start_date}
-                                                        </p>
-                                                        <p><i><strong>Current Score:</strong></i></p>
-                                                        <p>${home_team}: ${home_points}</p>
-                                                        <p>${away_team}: ${away_points}</p>
-                                                    </div>
-                                                    <div class="col-sm-6">
-                                                        <table class="table table-borderless">
-                                                            <thead>
-                                                                <th scope="col">Odd Type</th>
-                                                                <th scope="col">Value</th>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>${home_team} Money Line</td>
-                                                                    <td>${home_money_line}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>${away_team} Money Line</td>
-                                                                    <td>${away_money_line}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>${home_team} Point Spread</td>
-                                                                    <td>${home_point_spread}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>${away_team} Point Spread</td>
-                                                                    <td>${away_point_spread}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>${home_team} Point Spread Payout</td>
-                                                                    <td>${home_point_spread_payout}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>${away_team} Point Spread Payout</td>
-                                                                    <td>${away_point_spread_payout}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Over Under</td>
-                                                                    <td>${over_under}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Over Payout</td>
-                                                                    <td>${over_payout}</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>Under Payout</td>
-                                                                    <td>${under_payout}</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <div class="col-sm-3">
-                                                <div class="card-actions">
-                                                    <button id="place-bet" value="${game_id}" type="button" class="btn btn-success"
-                                                        data-toggle="modal" data-target="#exampleModal" data-whatever="@mdo">Place
-                                                        Bet</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>`;
-                            game_container.insertAdjacentHTML('beforeend', gameCard);
-
-                        });
-                    })
-
-                // filter results on keydown in filter box
-                this.document.getElementById('game-filter').addEventListener('keyup', function (event) {
-                    console.log(event);
-
-                    let input = document.getElementById('game-filter');
-                    let filter = input.value.toUpperCase();
-                    let game_container = document.getElementById('userView');
-                    let cards = game_container.getElementsByClassName('card');
-
-                    console.log(cards);
-
-                    for (i = 0; i < cards.length; i++) {
-                        let title = cards[i].getElementsByTagName("p")[0]
-                        let text_value = title.innerText || title.textContent;
-
-                        // change visibility if it matches search query
-                        if (text_value.toUpperCase().indexOf(filter) > -1) {
-                            cards[i].style.display = "";
-                        } else {
-                            cards[i].style.display = "none";
-                        }
-                    }
-                })
-            })
     }
 
 };
