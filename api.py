@@ -107,6 +107,43 @@ def validate_token(user_token):
     pass
 
 
+def add_bet_to_db(payload):
+
+    try:
+
+        # extract user fields from payload
+        game_id = payload['game_id']
+        user_id = payload['user_id']
+        user_pick = payload['user_pick']
+        bet_type = payload['bet_type']
+        bet_value = payload['bet_value']
+        bet_investment = payload['bet_investment']
+
+        # write changes to db
+        conn = sqlite3.connect('sports-bets.db')
+        c = conn.cursor()
+
+        # Create table if not exists
+        c.execute('''CREATE TABLE if not exists `bets` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `game_id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `user_pick` TEXT NOT NULL, `bet_type` TEXT NOT NULL, `bet_value` REAL NOT NULL, `bet_investment` REAL NOT NULL )''')
+
+        # insert bet
+        c.execute(
+            '''insert into bets(game_id,user_id,user_pick,bet_type,bet_value,bet_investment) values(?,?,?,?,?,?)''', (game_id, user_id,user_pick,bet_type,bet_value,bet_investment))
+
+        # Save (commit) the changes
+        conn.commit()
+
+        # We can also close the connection if we are done with it.
+        # Just be sure any changes have been committed or they will be lost.
+        conn.close()
+
+        return True
+
+    except Exception as e:
+        print(e)
+        return False
+
+
 @app.route('/login', methods=['GET', 'POST', 'OPTIONS'])
 def login():
     if request.method == 'OPTIONS':
@@ -207,10 +244,10 @@ def google_login():
 @app.route('/bets', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def bet_actions():
 
-    user_token = request.args.get('token')
+    json_payload = json.loads(request.json)
 
-    if validate_token(user_token):
-        pass
+    if validate_token(json_payload['token']):
+        add_bet_to_db(json_payload)
 
 
 @app.route('/sql', methods=['GET', 'POST'])
