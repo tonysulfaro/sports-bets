@@ -1,6 +1,7 @@
 var SESSIONINFO = {
     authenticated: false,
     googleAuthenticated: false,
+    googleProfile: null,
     username: null,
     token: null,
     games: {
@@ -33,6 +34,7 @@ function onSignIn(googleUser) {
     console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
 
     SESSIONINFO.googleAuthenticated = true;
+    SESSIONINFO.googleProfile = profile;
 
     // update global
     SESSIONINFO.authenticated = true;
@@ -41,6 +43,10 @@ function onSignIn(googleUser) {
 
     document.cookie = `token=${SESSIONINFO.token}`;
 
+    removeLoginScreen();
+}
+
+function removeLoginScreen() {
     // only modify nav if authenticated
     if (SESSIONINFO.authenticated) {
 
@@ -63,7 +69,13 @@ function onSignIn(googleUser) {
         document.body.style.background = 'none';
         // document.body.style.overflow = 'visible';
 
-        let current_user = profile.getEmail();
+        // pick what username to fill in based on auth type
+        let current_user = "";
+        if (SESSIONINFO.googleAuthenticated) {
+            current_user = SESSIONINFO.googleProfile.getEmail();
+        } else {
+            current_user = SESSIONINFO.username;
+        }
 
         let nav_bar = `<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
                             <a class="navbar-brand" href="#">Sports Bet Tracker</a>
@@ -266,6 +278,59 @@ function showGames() {
         })
 }
 
+function showStandings() {
+    let standings_container = document.getElementById('userView');
+
+    // remove children
+    standings_container.innerHTML = "";
+
+    let head = `<h1>My Bets</h1>`;
+    let sample_table =
+        `<table class="table">
+                    <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Game</th>
+                        <th scope="col">Pick</th>
+                        <th scope="col">Winner</th>
+                        <th scope="col">Ratio</th>
+                        <th scope="col">Investment</th>
+                        <th scope="col">Value</th>
+                        <th scope="col">Net Gain / Loss</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr>
+                        <th scope="row">9/14/19</th>
+                        <td>Arizona State At Michigan State</td>
+                        <td>Michigan State</td>
+                        <td>Arizona State</td>
+                        <td>2:1</td>
+                        <td>$20.00</td>
+                        <td>-$40.00</td>
+                        <td>-$40.00</td>
+                    </tr>
+                    </tbody>
+
+                    <thead class="bg-danger">
+                        <tr>
+                        <th scope="col">Totals</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col">$20.00</th>
+                        <th scope="col">-$40.00</th>
+                        <th scope="col">-$40.00</th>
+                        </tr>
+                    </thead>
+                    </table>`;
+
+    standings_container.insertAdjacentHTML('beforeend', head);
+    standings_container.insertAdjacentHTML('beforeend', sample_table);
+}
+
 function showAlert(alert_type, message) {
 
     // hide alerts if present
@@ -321,10 +386,6 @@ function updateBetForm(bet_type) {
     }
 }
 
-window.onload = function () {
-    new Bets();
-}
-
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -339,6 +400,10 @@ function getCookie(cname) {
         }
     }
     return "";
+}
+
+window.onload = function () {
+    new Bets();
 }
 
 const Bets = function () {
@@ -392,53 +457,7 @@ const Bets = function () {
 
                     document.cookie = `token=${SESSIONINFO.token}`;
 
-                    // only modify nav if authenticated
-                    if (SESSIONINFO.authenticated) {
-
-                        // enable overflow on body
-                        document.body.style.overflow = "scroll";
-                        // show games
-                        showGames();
-                        showAlert('success', 'Login Sucessful');
-
-                        // place user nav links into navbar when authenticated
-
-                        // remove main login form when logged in
-                        login_form_center.parentElement.removeChild(login_form_center);
-
-                        // set background to white
-                        document.body.style.background = 'none';
-                        // document.body.style.overflow = 'visible';
-
-                        let current_user = json['Username'];
-
-                        let nav_bar = `<nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-                            <a class="navbar-brand" href="#">Sports Bet Tracker</a>
-                            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                                <span class="navbar-toggler-icon"></span>
-                            </button>
-
-                            <div class="collapse navbar-collapse" id="navbarSupportedContent"><ul class="navbar-nav mr-auto">
-                                            <li class="nav-item">
-                                                <a id="games-link" class="nav-link" href="#">Games <span class="sr-only">(current)</span></a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a id="standings-link" class="nav-link" href="#">My Standings</a>
-                                            </li>
-                                        </ul>
-
-                                <form id="loginformnav" class="form-inline my-2 my-lg-0"><span id="current-user" class="navbar-text light">
-                                    ${current_user}</span><button id="logout-button" class="btn btn-outline-success my-2 my-sm-0" type="submit" value="logout">Logout</button></form>
-                            </div>
-                        </nav>`;
-                        document.body.insertAdjacentHTML('afterbegin', nav_bar);
-
-                    } else {
-                        // display authentication error
-                        showAlert('failure', 'Login Failed');
-                        // remove spinner
-                        document.getElementById('loading-spinner').parentElement.removeChild(document.getElementById('loading-spinner'));
-                    }
+                    removeLoginScreen();
 
                 } catch (error) {
                     console.error('Error:', error);
@@ -508,56 +527,7 @@ const Bets = function () {
                     return;
                 }
 
-                let standings_container = document.getElementById('userView');
-
-                // remove children
-                standings_container.innerHTML = "";
-
-                let head = `<h1>My Bets</h1>`;
-                let sample_table =
-                    `<table class="table">
-                    <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Game</th>
-                        <th scope="col">Pick</th>
-                        <th scope="col">Winner</th>
-                        <th scope="col">Ratio</th>
-                        <th scope="col">Investment</th>
-                        <th scope="col">Value</th>
-                        <th scope="col">Net Gain / Loss</th>
-                    </tr>
-                    </thead>
-
-                    <tbody>
-                    <tr>
-                        <th scope="row">9/14/19</th>
-                        <td>Arizona State At Michigan State</td>
-                        <td>Michigan State</td>
-                        <td>Arizona State</td>
-                        <td>2:1</td>
-                        <td>$20.00</td>
-                        <td>-$40.00</td>
-                        <td>-$40.00</td>
-                    </tr>
-                    </tbody>
-
-                    <thead class="bg-danger">
-                        <tr>
-                        <th scope="col">Totals</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col">$20.00</th>
-                        <th scope="col">-$40.00</th>
-                        <th scope="col">-$40.00</th>
-                        </tr>
-                    </thead>
-                    </table>`;
-
-                standings_container.insertAdjacentHTML('beforeend', head);
-                standings_container.insertAdjacentHTML('beforeend', sample_table);
+                showStandings();
             }
             // place bet on game list clicked
             else if (event.srcElement.id == 'place-bet') {
