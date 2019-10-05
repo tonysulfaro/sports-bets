@@ -316,27 +316,27 @@ function showStandings() {
         `<table class="table">
                     <thead class="thead-dark">
                     <tr>
-                        <th scope="col">Date</th>
+                        <th scope="col">Date/Time</th>
                         <th scope="col">Game</th>
                         <th scope="col">Pick</th>
                         <th scope="col">Winner</th>
-                        <th scope="col">Ratio</th>
+                        <th scope="col">Bet Type</th>
+                        <th scope="col">Bet Value</th>
                         <th scope="col">Investment</th>
-                        <th scope="col">Value</th>
                         <th scope="col">Net Gain / Loss</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     <tr>
-                        <th scope="row">9/14/19</th>
+                        <th scope="row">9/14/19 6:00 PM</th>
                         <td>Arizona State At Michigan State</td>
                         <td>Michigan State</td>
                         <td>Arizona State</td>
-                        <td>2:1</td>
+                        <td>Money Line</td>
+                        <td>+657</td>
                         <td>$20.00</td>
-                        <td>-$40.00</td>
-                        <td>-$40.00</td>
+                        <td>-$20.00</td>
                     </tr>
                     </tbody>
 
@@ -347,9 +347,9 @@ function showStandings() {
                         <th scope="col"></th>
                         <th scope="col"></th>
                         <th scope="col"></th>
+                        <th scope="col"></th>
                         <th scope="col">$20.00</th>
-                        <th scope="col">-$40.00</th>
-                        <th scope="col">-$40.00</th>
+                        <th scope="col">-$20.00</th>
                         </tr>
                     </thead>
                     </table>`;
