@@ -366,13 +366,13 @@ function showStandings() {
 
                 let row_template = `<tr>
                         <th scope="row">9/14/19 6:00 PM</th>
-                        <td>Arizona State At Michigan State</td>
+                        <td>${game_id}</td>
                         <td>${user_pick}</td>
-                        <td>Arizona State</td>
+                        <td>{winning_team_value}</td>
                         <td>${bet_type}</td>
                         <td>${bet_type_value}</td>
                         <td>$${investment_amount}</td>
-                        <td>-$20.00</td>
+                        <td>{calculated_gain_loss}</td>
                     </tr>`
                 sample_table += row_template;
             });
