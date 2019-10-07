@@ -11,10 +11,10 @@ var SESSIONINFO = {
     endpoints: {
         login: 'https://tony116523.pythonanywhere.com/login',
         token: 'https://tony116523.pythonanywhere.com/token',
-        bet: 'https://tony116523.pythonanywhere.com/bet',
+        bet: 'https://tony116523.pythonanywhere.com/bets',
         cfb_games: {
-            game_odds_week: `https://api.sportsdata.io/v3/cfb/odds/json/GameOddsByWeek/2019/6?key=be6928703873487fb703ca9ce13a6bc9`,
-            game_scores_week: `https://api.sportsdata.io/v3/cfb/scores/json/GamesByWeek/2019/6?key=be6928703873487fb703ca9ce13a6bc9`
+            game_odds_week: `https://api.sportsdata.io/v3/cfb/odds/json/GameOddsByWeek/2019/7?key=be6928703873487fb703ca9ce13a6bc9`,
+            game_scores_week: `https://api.sportsdata.io/v3/cfb/scores/json/GamesByWeek/2019/7?key=be6928703873487fb703ca9ce13a6bc9`
         }
     }
 }
@@ -53,7 +53,7 @@ function onSuccess(googleUser) {
 
 function onFailure(error) {
     console.log(error);
-    showAlert('failure', error.details);
+    showAlert('failure', 'Google Login Failed');
 }
 
 function renderButton() {
@@ -134,8 +134,6 @@ function showGames() {
                     </div>
                 </div>`;
 
-    document.getElementById('userView').insertAdjacentHTML('beforeend', loading_spinner);
-
     fetch(SESSIONINFO.endpoints.cfb_games.game_odds_week)
         .then(function (response) {
             return response.json();
@@ -146,11 +144,12 @@ function showGames() {
 
             let game_container = document.getElementById('userView');
             game_container.innerHTML = "";
+            document.getElementById('userView').insertAdjacentHTML('beforeend', loading_spinner);
 
             //add game header
             let game_header = `<h1>Games</h1><select class="custom-select" id="sport-type-pick">
-                                    <option value="money-line">NCAA Football</option>
-                                    <option value="over-under">NFL</option>
+                                    <option value="ncaa-football">NCAA Football</option>
+                                    <option value="nfl">NFL</option>
                                 </select><label for="basic-url">Filter Results:</label>
                                 <div class="input-group mb-3">
                                 <div class="input-group-prepend">
@@ -167,6 +166,11 @@ function showGames() {
                     return score_response.json();
                 })
                 .then(function (score_json_response) {
+
+                    console.log(json_response);
+
+                    // remove spinner
+                    document.getElementById('loading-spinner').parentElement.removeChild(document.getElementById('loading-spinner'));
 
                     json_response.forEach(element => {
 
@@ -188,18 +192,19 @@ function showGames() {
                         let start_date = new Date(Date.parse(element.DateTime)).toLocaleString();
 
                         // odds information
-                        let latest_odds = element.PregameOdds[0];
-                        let home_money_line = latest_odds.HomeMoneyLine;
-                        let away_money_line = latest_odds.AwayMoneyLine;
-                        let home_point_spread = latest_odds.HomePointSpread;
-                        let away_point_spread = latest_odds.AwayPointSpread;
-                        let home_point_spread_payout = latest_odds.HomePointSpreadPayout;
-                        let away_point_spread_payout = latest_odds.AwayPointSpreadPayout;
-                        let over_under = latest_odds.OverUnder;
-                        let over_payout = latest_odds.OverPayout;
-                        let under_payout = latest_odds.UnderPayout;
+                        try {
+                            let latest_odds = element.PregameOdds[0];
+                            let home_money_line = latest_odds.HomeMoneyLine;
+                            let away_money_line = latest_odds.AwayMoneyLine;
+                            let home_point_spread = latest_odds.HomePointSpread;
+                            let away_point_spread = latest_odds.AwayPointSpread;
+                            let home_point_spread_payout = latest_odds.HomePointSpreadPayout;
+                            let away_point_spread_payout = latest_odds.AwayPointSpreadPayout;
+                            let over_under = latest_odds.OverUnder;
+                            let over_payout = latest_odds.OverPayout;
+                            let under_payout = latest_odds.UnderPayout;
 
-                        var gameCard = `<div id="${game_id}" class="card">
+                            var gameCard = `<div id="${game_id}" class="card">
                                 <div class="card-body">
                                     <div class="container">
                                         <div class="row">
@@ -274,7 +279,11 @@ function showGames() {
                                     </div>
                                 </div>
                             </div>`;
-                        game_container.insertAdjacentHTML('beforeend', gameCard);
+                            game_container.insertAdjacentHTML('beforeend', gameCard);
+
+                        } catch {
+                            return;
+                        }
 
                     });
                 })
@@ -301,12 +310,20 @@ function showGames() {
                         cards[i].style.display = "none";
                     }
                 }
-            })
-        })
+            });
+        });
 }
 
 function showStandings() {
     let standings_container = document.getElementById('userView');
+
+    fetch(`${SESSIONINFO.endpoints.bet}?token=${SESSIONINFO.token}`)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (bet_response) {
+            console.log(bet_response)
+        })
 
     // remove children
     standings_container.innerHTML = "";
@@ -393,21 +410,21 @@ function updateBetForm(bet_type) {
     if (bet_type == 'over-under') {
         let money_line_controls = `<div class="form-group">
                                     <label for="over-under" class="col-form-label">Over Under:</label>
-                                    <input type="number" class="form-control" id="over-under">
+                                    <input type="number" class="form-control" id="bet-type-value">
                                 </div>`;
         setBetFormItems(money_line_controls);
 
     } else if (bet_type == 'money-line') {
         let money_line_controls = `<div class="form-group">
                                     <label for="money-line" class="col-form-label">Money Line:</label>
-                                    <input type="number" class="form-control" id="money-line">
+                                    <input type="number" class="form-control" id="bet-type-value">
                                 </div>`;
         setBetFormItems(money_line_controls);
 
     } else if (bet_type == 'spread') {
         let money_line_controls = `<div class="form-group">
                                     <label for="spread" class="col-form-label">Spread:</label>
-                                    <input type="number" class="form-control" id="spread">
+                                    <input type="number" class="form-control" id="bet-type-value">
                                 </div>`;
         setBetFormItems(money_line_controls);
     }
@@ -566,6 +583,7 @@ const Bets = function () {
 
                 // set game name in bet form
                 $('#game-name').val(betting_game.AwayTeamName + ' at ' + betting_game.HomeTeamName);
+                $('#confirm-bet').val(game_id);
 
                 // add winner pick options in form
                 document.getElementById('winner-pick').innerHTML = '';
@@ -576,6 +594,20 @@ const Bets = function () {
             else if (event.srcElement.id == 'confirm-bet') {
                 // TODO: actually send request to place bet
                 showAlert('success', 'Bet Placed');
+
+                let game_id = event.srcElement.value;
+                let user_pick = document.getElementById('winner-pick').value;
+                let bet_type = document.getElementById('bet-type-pick').value;
+                let bet_type_value = document.getElementById('bet-type-value').value;
+                let bet_investment = document.getElementById('investment-amount').value;
+
+                console.log(game_id);
+                console.log(user_pick);
+                console.log(bet_type);
+                console.log(bet_type_value);
+                console.log(bet_investment);
+
+
             }
 
         });
