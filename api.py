@@ -206,8 +206,9 @@ def add_bet_to_db(payload):
     try:
 
         # extract user fields from payload
+        token = payload['token']
+        user_id = get_user_from_token(token)[0]
         game_id = payload['game_id']
-        user_id = payload['user_id']
         user_pick = payload['user_pick']
         bet_type = payload['bet_type']
         bet_value = payload['bet_value']

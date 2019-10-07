@@ -323,14 +323,13 @@ function showStandings() {
         })
         .then(function (bet_response) {
             console.log(bet_response)
-        })
 
-    // remove children
-    standings_container.innerHTML = "";
+            // remove children
+            standings_container.innerHTML = "";
 
-    let head = `<h1>My Bets</h1>`;
-    let sample_table =
-        `<table class="table">
+            let head = `<h1>My Bets</h1>`;
+            let sample_table =
+                `<table class="table">
                     <thead class="thead-dark">
                     <tr>
                         <th scope="col">Date/Time</th>
@@ -354,25 +353,55 @@ function showStandings() {
                         <td>+657</td>
                         <td>$20.00</td>
                         <td>-$20.00</td>
-                    </tr>
-                    </tbody>
+                    </tr>`
 
-                    <thead class="bg-danger">
-                        <tr>
-                        <th scope="col">Totals</th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col"></th>
-                        <th scope="col">$20.00</th>
-                        <th scope="col">-$20.00</th>
-                        </tr>
-                    </thead>
-                    </table>`;
+            // generate view of bets
+            bet_response.forEach(bet => {
 
-    standings_container.insertAdjacentHTML('beforeend', head);
-    standings_container.insertAdjacentHTML('beforeend', sample_table);
+                let game_id = bet[1];
+                let user_pick = bet[3];
+                let bet_type = bet[4];
+                let bet_type_value = bet[5];
+                let investment_amount = bet[6];
+
+                let row_template = `<tr>
+                        <th scope="row">9/14/19 6:00 PM</th>
+                        <td>Arizona State At Michigan State</td>
+                        <td>${user_pick}</td>
+                        <td>Arizona State</td>
+                        <td>${bet_type}</td>
+                        <td>${bet_type_value}</td>
+                        <td>$${investment_amount}</td>
+                        <td>-$20.00</td>
+                    </tr>`
+                sample_table += row_template;
+            });
+
+            // get sum of all invested money
+            let total_investments = 0;
+            bet_response.forEach(bet => {
+                total_investments += bet[6];
+            });
+
+            sample_table += `</tbody><thead class="bg-danger">
+                <tr>
+                <th scope="col">Totals</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col">$${parseFloat(total_investments).toFixed(2)}</th>
+                <th scope="col">-$20.00</th>
+                </tr>
+            </thead>
+            </table>`;
+
+            standings_container.insertAdjacentHTML('beforeend', head);
+            standings_container.insertAdjacentHTML('beforeend', sample_table);
+        })
+
+
 }
 
 function showAlert(alert_type, message) {
@@ -607,7 +636,27 @@ const Bets = function () {
                 console.log(bet_type_value);
                 console.log(bet_investment);
 
+                payload = {
+                    token: SESSIONINFO.token,
+                    game_id: Number(game_id),
+                    user_pick: user_pick,
+                    bet_type: bet_type,
+                    bet_type_value: Number(bet_type_value),
+                    bet_investment: Number(bet_investment)
+                }
 
+                console.log(payload);
+
+                fetch(SESSIONINFO.endpoints.bet, {
+                        method: 'POST', // or 'PUT'
+                        body: JSON.stringify(payload), // data can be `string` or {object}!
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(function (response) {
+                        console.log('');
+                    })
             }
 
         });
