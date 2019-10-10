@@ -58,7 +58,8 @@ function onSuccess(googleUser) {
                 }
             })
             .then(function (response) {
-                console.log(response);
+                console.log('fetching token from google token');
+                console.log(response.json());
                 if (response.status === 200) {
                     SESSIONINFO.token = response.json().token;
                 }
