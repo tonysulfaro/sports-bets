@@ -49,6 +49,7 @@ function onSuccess(googleUser) {
         token: googleUser.getAuthResponse().id_token
     }
 
+    // get the token from api to prove google user is valid
     try {
         fetch(SESSIONINFO.endpoints.google_login, {
                 method: 'POST', // or 'PUT'
@@ -62,11 +63,8 @@ function onSuccess(googleUser) {
             })
             .then(function (json_response) {
                 console.log('fetching token from google token');
-                console.log(response);
                 console.log(json_response)
-                if (response.status === 200) {
-                    SESSIONINFO.token = json_response.token;
-                }
+                SESSIONINFO.token = json_response.token;
             })
 
     } catch (error) {
