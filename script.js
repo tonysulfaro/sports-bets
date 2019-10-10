@@ -58,10 +58,14 @@ function onSuccess(googleUser) {
                 }
             })
             .then(function (response) {
+                return response.json();
+            })
+            .then(function (json_response) {
                 console.log('fetching token from google token');
-                console.log(response.json());
+                console.log(response);
+                console.log(json_response)
                 if (response.status === 200) {
-                    SESSIONINFO.token = response.json().token;
+                    SESSIONINFO.token = json_response.token;
                 }
             })
 
