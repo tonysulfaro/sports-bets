@@ -416,17 +416,7 @@ function showStandings() {
                     </tr>
                     </thead>
 
-                    <tbody>
-                    <tr>
-                        <th scope="row">9/14/19 6:00 PM</th>
-                        <td>Arizona State At Michigan State</td>
-                        <td>Michigan State</td>
-                        <td>Arizona State</td>
-                        <td>Money Line</td>
-                        <td>+657</td>
-                        <td>$20.00</td>
-                        <td>-$20.00</td>
-                    </tr>`
+                    <tbody>`
 
             // generate view of bets
             bet_response.forEach(bet => {

@@ -311,7 +311,6 @@ def login():
 
 @app.route('/login/google', methods=['POST', 'OPTIONS'])
 def google_login():
-
     if request.method == 'OPTIONS':
         resp = make_response()
         resp.headers['Content-Type'] = 'application/json'
@@ -395,6 +394,8 @@ def google_login():
 
 @app.route('/bets', methods=['GET', 'POST', 'OPTIONS', 'PUT', 'DELETE'])
 def bet_actions():
+    print('bet time')
+
     if request.method == 'OPTIONS':
         resp = make_response()
         resp.headers['Content-Type'] = 'application/json'
@@ -441,12 +442,15 @@ def bet_actions():
 
     elif request.method == 'POST':
 
+        print('time to place bet for real')
+
         resp = make_response()
 
         json_payload = request.json
         user_auth_ok = validate_token(json_payload['token'])
 
         if user_auth_ok:
+            print('user auth ok, write bet to db')
             if add_bet_to_db(json_payload):
 
                 print('bet place sucessful')
