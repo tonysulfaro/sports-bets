@@ -208,11 +208,15 @@ def add_bet_to_db(payload):
         # extract user fields from payload
         token = payload['token']
         user_id = get_user_from_token(token)[0]
-        game_id = payload['game_id']
+        game_id = int(payload['game_id'])
         user_pick = payload['user_pick']
         bet_type = payload['bet_type']
-        bet_value = payload['bet_value']
-        bet_investment = payload['bet_investment']
+        bet_value = float(payload['bet_type_value'])
+        bet_investment = float(payload['bet_investment'])
+
+
+
+        print(token, user_id, game_id, user_pick, bet_type, bet_value, bet_investment)
 
         # write changes to db
         conn = sqlite3.connect('sports-bets.db')
@@ -225,7 +229,7 @@ def add_bet_to_db(payload):
         # insert bet
         c.execute(
             '''insert into bets(game_id,user_id,user_pick,bet_type,bet_value,bet_investment) values(?,?,?,?,?,?)''',
-            (game_id, user_id, user_pick, bet_type, bet_value, bet_investment))
+            (game_id, 24, user_pick, bet_type, bet_value, bet_investment))
 
         # Save (commit) the changes
         conn.commit()
@@ -377,7 +381,6 @@ def google_login():
 
         except Exception as e:
             # Invalid token
-            a = Exception
             print(e)
 
         resp = make_response(json.dumps(
@@ -449,9 +452,20 @@ def bet_actions():
         json_payload = request.json
         user_auth_ok = validate_token(json_payload['token'])
 
+        print(json_payload)
+
+
+
         if user_auth_ok:
             print('user auth ok, write bet to db')
-            if add_bet_to_db(json_payload):
+            bet_placed = add_bet_to_db(json_payload)
+
+            resp = make_response(json.dumps(
+                    {"Message": "Bet Placed", "UserAuthenticated":user_auth_ok, "SourcePayload":json_payload, "BetPlaced":bet_placed}), 201)
+
+            return resp
+
+            if bet_placed:
 
                 print('bet place sucessful')
 

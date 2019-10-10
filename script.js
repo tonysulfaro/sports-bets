@@ -390,6 +390,19 @@ function showGames(sport, selected_year, selected_week) {
 function showStandings() {
     let standings_container = document.getElementById('games');
 
+    let current_season = document.getElementById('season-year-select').value;
+    let cfb_this_year = `https://api.sportsdata.io/v3/cfb/scores/json/Games/${current_season}?key=be6928703873487fb703ca9ce13a6bc9`;
+    var cfb_games_year = [];
+
+    fetch(cfb_this_year)
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (json_response) {
+            cfb_games_year = json_response;
+            console.log(cfb_games_year);
+        })
+
     fetch(`${SESSIONINFO.endpoints.bet}?token=${SESSIONINFO.token}`)
         .then(function (response) {
             return response.json();
@@ -455,7 +468,7 @@ function showStandings() {
                 <th scope="col"></th>
                 <th scope="col"></th>
                 <th scope="col">$${parseFloat(total_investments).toFixed(2)}</th>
-                <th scope="col">-$20.00</th>
+                <th scope="col">{net_gain_loss}</th>
                 </tr>
             </thead>
             </table>`;
