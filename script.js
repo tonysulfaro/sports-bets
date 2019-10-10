@@ -60,7 +60,7 @@ function onSuccess(googleUser) {
             .then(function (response) {
                 console.log(response);
                 if (response.status === 200) {
-                    SESSIONINFO.token = response.token;
+                    SESSIONINFO.token = response.json().token;
                 }
             })
 
