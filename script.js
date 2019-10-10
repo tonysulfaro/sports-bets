@@ -50,21 +50,19 @@ function onSuccess(googleUser) {
     }
 
     try {
-        const response = await fetch(SESSIONINFO.endpoints.google_login, {
-            method: 'POST', // or 'PUT'
-            body: JSON.stringify(payload), // data can be `string` or {object}!
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        const json = await response.json();
-
-        if (response.status === 200) {
-            console.log(response);
-            SESSIONINFO.token = response.token;
-        } else {
-            showAlert('failure', json['Message']);
-        }
+        fetch(SESSIONINFO.endpoints.google_login, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(payload), // data can be `string` or {object}!
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function (response) {
+                console.log(response);
+                if (response.status === 200) {
+                    SESSIONINFO.token = response.token;
+                }
+            })
 
     } catch (error) {
         console.error('Error:', error);
