@@ -702,24 +702,28 @@ const Bets = function () {
 
                 payload = {
                     token: SESSIONINFO.token,
-                    game_id: Number(game_id),
+                    game_id: game_id,
                     user_pick: user_pick,
                     bet_type: bet_type,
-                    bet_type_value: Number(bet_type_value),
-                    bet_investment: Number(bet_investment)
+                    bet_type_value: bet_type_value,
+                    bet_investment: bet_investment
                 }
 
                 console.log(payload);
 
                 fetch(SESSIONINFO.endpoints.bet, {
                         method: 'POST', // or 'PUT'
-                        body: payload, // data can be `string` or {object}!
+                        body: JSON.stringify(payload), // data can be `string` or {object}!
                         headers: {
                             'Content-Type': 'application/json'
                         }
                     })
                     .then(function (response) {
                         console.log(response);
+                        return response.json();
+                    })
+                    .then(function (json_response) {
+                        console.log(json_response);
                     })
             }
 
