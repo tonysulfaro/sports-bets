@@ -10,6 +10,7 @@ var SESSIONINFO = {
     },
     endpoints: {
         login: 'https://tony116523.pythonanywhere.com/login',
+        google_login: 'https://tony116523.pythonanywhere.com/login/google',
         token: 'https://tony116523.pythonanywhere.com/token',
         bet: 'https://tony116523.pythonanywhere.com/bets',
     }
@@ -43,6 +44,31 @@ function onSuccess(googleUser) {
     SESSIONINFO.token = 'some token for later';
 
     document.cookie = `token=${SESSIONINFO.token}`;
+
+    let payload = {
+        token: googleUser.getAuthResponse().id_token
+    }
+
+    try {
+        const response = await fetch(SESSIONINFO.endpoints.google_login, {
+            method: 'POST', // or 'PUT'
+            body: JSON.stringify(payload), // data can be `string` or {object}!
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const json = await response.json();
+
+        if (response.status === 200) {
+            console.log(response);
+            SESSIONINFO.token = response.token;
+        } else {
+            showAlert('failure', json['Message']);
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
 
     removeLoginScreen();
     showFilteringOptions();
@@ -190,8 +216,6 @@ function showGames(sport, selected_year, selected_week) {
         .then(function (json_response) {
 
             SESSIONINFO.games.cfb = json_response
-
-
 
             // get latest scores for games
             fetch(cfb_games.game_scores_week)
@@ -704,7 +728,7 @@ const Bets = function () {
                         }
                     })
                     .then(function (response) {
-                        console.log('');
+                        console.log(response);
                     })
             }
 
