@@ -713,7 +713,7 @@ const Bets = function () {
 
                 fetch(SESSIONINFO.endpoints.bet, {
                         method: 'POST', // or 'PUT'
-                        body: JSON.stringify(payload), // data can be `string` or {object}!
+                        body: payload, // data can be `string` or {object}!
                         headers: {
                             'Content-Type': 'application/json'
                         }
