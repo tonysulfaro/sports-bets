@@ -64,7 +64,7 @@ function onSuccess(googleUser) {
             .then(function (json_response) {
                 console.log('fetching token from google token');
                 console.log(json_response)
-                SESSIONINFO.token = json_response.token;
+                SESSIONINFO.token = json_response.Token;
             })
 
     } catch (error) {
