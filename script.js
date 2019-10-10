@@ -179,6 +179,10 @@ function showGames(sport, selected_year, selected_week) {
                     </div>
                 </div>`;
 
+    let game_container = document.getElementById('games');
+    game_container.innerHTML = "";
+    document.getElementById('games').insertAdjacentHTML('beforeend', loading_spinner);
+
     fetch(cfb_games.game_odds_week)
         .then(function (response) {
             return response.json();
@@ -187,9 +191,7 @@ function showGames(sport, selected_year, selected_week) {
 
             SESSIONINFO.games.cfb = json_response
 
-            let game_container = document.getElementById('games');
-            game_container.innerHTML = "";
-            document.getElementById('games').insertAdjacentHTML('beforeend', loading_spinner);
+
 
             // get latest scores for games
             fetch(cfb_games.game_scores_week)
@@ -229,6 +231,7 @@ function showGames(sport, selected_year, selected_week) {
                         var over_payout = null;
                         var under_payout = null;
 
+                        // populate fields if odds exist
                         if (element.PregameOdds.length !== 0) {
                             latest_odds = element.PregameOdds[0];
                             home_money_line = latest_odds.HomeMoneyLine;
@@ -242,6 +245,7 @@ function showGames(sport, selected_year, selected_week) {
                             under_payout = latest_odds.UnderPayout;
                         }
 
+                        // add time if game has a scheduled time
                         if (element.DateTime != null) {
                             start_time = new Date(Date.parse(element.DateTime)).toLocaleTimeString();
                         }
