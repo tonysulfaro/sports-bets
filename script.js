@@ -12,10 +12,6 @@ var SESSIONINFO = {
         login: 'https://tony116523.pythonanywhere.com/login',
         token: 'https://tony116523.pythonanywhere.com/token',
         bet: 'https://tony116523.pythonanywhere.com/bets',
-        cfb_games: {
-            game_odds_week: `https://api.sportsdata.io/v3/cfb/odds/json/GameOddsByWeek/2019/7?key=be6928703873487fb703ca9ce13a6bc9`,
-            game_scores_week: `https://api.sportsdata.io/v3/cfb/scores/json/GamesByWeek/2019/7?key=be6928703873487fb703ca9ce13a6bc9`
-        }
     }
 }
 
@@ -49,6 +45,7 @@ function onSuccess(googleUser) {
     document.cookie = `token=${SESSIONINFO.token}`;
 
     removeLoginScreen();
+    showFilteringOptions();
 }
 
 function onFailure(error) {
@@ -77,7 +74,7 @@ function removeLoginScreen() {
         // enable overflow on body
         document.body.style.overflow = "scroll";
         // show games
-        showGames();
+        showGames('cfb', 2019, 1);
         showAlert('success', 'Login Sucessful');
 
         // place user nav links into navbar when authenticated
@@ -126,7 +123,55 @@ function removeLoginScreen() {
     }
 }
 
-function showGames() {
+function showFilteringOptions() {
+    //add game header
+    let game_header = `<h1>Games</h1>
+            <div class="form-group">
+            <label for="basic-url">Filter by Sport:</label>
+            <select class="custom-select" id="sport-type-pick">
+                <option value="ncaa-football">NCAA Football</option>
+                <option value="nfl">NFL (not implemented yet)</option>
+            </select>
+            </div>
+            <div class="form-group">
+            <label for="basic-url">Filter by Season / Week:</label>
+            <div class="input-group">
+                <select class="custom-select" id="season-year-select">
+                    <option value="2019">2019 Season</option>
+                    <option value="2018">2018 Season</option>
+                </select>
+            <select class="custom-select" id="season-week-select">`;
+
+    // add weeks in there for season
+    for (let i = 1; i <= 15; ++i) {
+        game_header += `<option value="${i}">Week ${i}</option>`;
+    }
+
+    game_header += `</select>
+                
+            </select>
+            </div>
+            </div>
+
+            <div class="form-group">
+            <label for="basic-url">Filter by Game:</label>
+         
+            <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="basic-addon3">Game:</span>
+            </div>
+            <input type="text" class="form-control" id="game-filter" aria-describedby="basic-addon3">
+            </div></div>`;
+
+    document.getElementById('userView').insertAdjacentHTML('beforeend', game_header);
+}
+
+function showGames(sport, selected_year, selected_week) {
+
+    let cfb_games = {
+        game_odds_week: `https://api.sportsdata.io/v3/cfb/odds/json/GameOddsByWeek/${selected_year}/${selected_week}?key=be6928703873487fb703ca9ce13a6bc9`,
+        game_scores_week: `https://api.sportsdata.io/v3/cfb/scores/json/GamesByWeek/${selected_year}/${selected_week}?key=be6928703873487fb703ca9ce13a6bc9`
+    }
 
     let loading_spinner = `<div id="loading-spinner" class="d-flex justify-content-center">
                     <div class="spinner-border" role="status">
@@ -134,7 +179,7 @@ function showGames() {
                     </div>
                 </div>`;
 
-    fetch(SESSIONINFO.endpoints.cfb_games.game_odds_week)
+    fetch(cfb_games.game_odds_week)
         .then(function (response) {
             return response.json();
         })
@@ -142,26 +187,12 @@ function showGames() {
 
             SESSIONINFO.games.cfb = json_response
 
-            let game_container = document.getElementById('userView');
+            let game_container = document.getElementById('games');
             game_container.innerHTML = "";
-            document.getElementById('userView').insertAdjacentHTML('beforeend', loading_spinner);
-
-            //add game header
-            let game_header = `<h1>Games</h1><select class="custom-select" id="sport-type-pick">
-                                    <option value="ncaa-football">NCAA Football</option>
-                                    <option value="nfl">NFL</option>
-                                </select><label for="basic-url">Filter Results:</label>
-                                <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text" id="basic-addon3">Game:</span>
-                                </div>
-                                <input type="text" class="form-control" id="game-filter" aria-describedby="basic-addon3">
-                                </div>`;
-
-            game_container.insertAdjacentHTML('beforeend', game_header);
+            document.getElementById('games').insertAdjacentHTML('beforeend', loading_spinner);
 
             // get latest scores for games
-            fetch(SESSIONINFO.endpoints.cfb_games.game_scores_week)
+            fetch(cfb_games.game_scores_week)
                 .then(function (score_response) {
                     return score_response.json();
                 })
@@ -174,13 +205,6 @@ function showGames() {
 
                     json_response.forEach(element => {
 
-                        // show only games that aren't over yet
-                        if (element.Status == "Final" || element.Status == "F/OT") {
-                            return;
-                        }
-
-                        console.log(element.Status);
-
                         // game information
                         let game_id = element.GameId;
                         let home_team = element.HomeTeamName;
@@ -189,22 +213,40 @@ function showGames() {
                         let home_points = score_json_response.filter(game => game.GameID == game_id)[0].HomeTeamScore;
                         let away_points = score_json_response.filter(game => game.GameID == game_id)[0].AwayTeamScore;
                         // date information
-                        let start_date = new Date(Date.parse(element.DateTime)).toLocaleString();
-
+                        let start_date = new Date(Date.parse(element.Day)).toLocaleDateString();
+                        let start_time = 'TBD';
                         // odds information
-                        try {
-                            let latest_odds = element.PregameOdds[0];
-                            let home_money_line = latest_odds.HomeMoneyLine;
-                            let away_money_line = latest_odds.AwayMoneyLine;
-                            let home_point_spread = latest_odds.HomePointSpread;
-                            let away_point_spread = latest_odds.AwayPointSpread;
-                            let home_point_spread_payout = latest_odds.HomePointSpreadPayout;
-                            let away_point_spread_payout = latest_odds.AwayPointSpreadPayout;
-                            let over_under = latest_odds.OverUnder;
-                            let over_payout = latest_odds.OverPayout;
-                            let under_payout = latest_odds.UnderPayout;
+                        // try {
 
-                            var gameCard = `<div id="${game_id}" class="card">
+                        var latest_odds = null;
+                        var home_money_line = null;
+                        var away_money_line = null;
+                        var home_point_spread = null;
+                        var away_point_spread = null;
+                        var home_point_spread_payout = null;
+                        var away_point_spread_payout = null;
+                        var over_under = null;
+                        var over_payout = null;
+                        var under_payout = null;
+
+                        if (element.PregameOdds.length !== 0) {
+                            latest_odds = element.PregameOdds[0];
+                            home_money_line = latest_odds.HomeMoneyLine;
+                            away_money_line = latest_odds.AwayMoneyLine;
+                            home_point_spread = latest_odds.HomePointSpread;
+                            away_point_spread = latest_odds.AwayPointSpread;
+                            home_point_spread_payout = latest_odds.HomePointSpreadPayout;
+                            away_point_spread_payout = latest_odds.AwayPointSpreadPayout;
+                            over_under = latest_odds.OverUnder;
+                            over_payout = latest_odds.OverPayout;
+                            under_payout = latest_odds.UnderPayout;
+                        }
+
+                        if (element.DateTime != null) {
+                            start_time = new Date(Date.parse(element.DateTime)).toLocaleTimeString();
+                        }
+
+                        var gameCard = `<div id="${game_id}" class="card">
                                 <div class="card-body">
                                     <div class="container">
                                         <div class="row">
@@ -212,7 +254,9 @@ function showGames() {
                                                 <p id="card-game-name"><strong>${away_team} at ${home_team}</strong></p>
                                                 <div class="row">
                                                     <div class="col-sm-6">
-                                                        <p>${start_date}
+                                                        <p>Date: ${start_date}
+                                                        </p>
+                                                        <p>Time: ${start_time}
                                                         </p>
                                                         <p><i><strong>Current Score:</strong></i></p>
                                                         <p>${home_team}: ${home_points}</p>
@@ -279,11 +323,11 @@ function showGames() {
                                     </div>
                                 </div>
                             </div>`;
-                            game_container.insertAdjacentHTML('beforeend', gameCard);
+                        game_container.insertAdjacentHTML('beforeend', gameCard);
 
-                        } catch {
-                            return;
-                        }
+                        // } catch {
+                        //     return;
+                        // }
 
                     });
                 })
@@ -294,7 +338,7 @@ function showGames() {
 
                 let input = document.getElementById('game-filter');
                 let filter = input.value.toUpperCase();
-                let game_container = document.getElementById('userView');
+                let game_container = document.getElementById('games');
                 let cards = game_container.getElementsByClassName('card');
 
                 console.log(cards);
@@ -315,7 +359,7 @@ function showGames() {
 }
 
 function showStandings() {
-    let standings_container = document.getElementById('userView');
+    let standings_container = document.getElementById('games');
 
     fetch(`${SESSIONINFO.endpoints.bet}?token=${SESSIONINFO.token}`)
         .then(function (response) {
@@ -531,6 +575,7 @@ const Bets = function () {
                     document.cookie = `token=${SESSIONINFO.token}`;
 
                     removeLoginScreen();
+                    showFilteringOptions();
 
                 } catch (error) {
                     console.error('Error:', error);
@@ -591,7 +636,7 @@ const Bets = function () {
             // show games on nav click
             else if (event.srcElement.id == 'games-link') {
                 if (SESSIONINFO.authenticated) {
-                    showGames();
+                    showGames('cfb', 2019, 1);
                 }
             }
             // show standings when authenticated
@@ -657,6 +702,24 @@ const Bets = function () {
                     .then(function (response) {
                         console.log('');
                     })
+            }
+
+            // change week
+            else if (event.srcElement.id == 'season-week-select') {
+                let selected_week = event.srcElement.value;
+                let selected_year = document.getElementById('season-year-select').value;
+                console.log(selected_week);
+                // update view
+                showGames('cfb', selected_year, selected_week);
+            }
+
+            // change year
+            else if (event.srcElement.id == 'season-year-select') {
+                let selected_year = event.srcElement.value;
+                let selected_week = document.getElementById('season-week-select').value;
+                console.log(selected_year);
+                // update view
+                showGames('cfb', selected_year, selected_week);
             }
 
         });
