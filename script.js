@@ -469,7 +469,16 @@ function showStandings() {
                 total_investments += bet[6];
             });
 
-            sample_table += `</tbody><thead class="bg-danger">
+            sample_table += `</tbody>`;
+
+            let gains = 1;
+            let table_class = 'bg-success';
+
+            if (gains < 0) {
+                table_class = 'bg-danger';
+            }
+
+            sample_table += `<thead class="${table_class}">
                 <tr>
                 <th scope="col">Totals</th>
                 <th scope="col"></th>
