@@ -152,7 +152,7 @@ function removeLoginScreen() {
 
 function showFilteringOptions() {
     //add game header
-    let game_header = `<h1>Games</h1>
+    let game_header = `<div id="filtering-options"><h1>Games</h1>
             <div class="form-group">
             <label for="basic-url">Filter by Sport:</label>
             <select class="custom-select" id="sport-type-pick">
@@ -188,12 +188,19 @@ function showFilteringOptions() {
                 <span class="input-group-text" id="basic-addon3">Game:</span>
             </div>
             <input type="text" class="form-control" id="game-filter" aria-describedby="basic-addon3">
-            </div></div>`;
+            </div></div></div>`;
 
     document.getElementById('userView').insertAdjacentHTML('beforeend', game_header);
 }
 
 function showGames(sport, selected_year, selected_week) {
+
+    // hacky really but will refactor when python flask MVC
+    try {
+        document.getElementById('filtering-options').style.display = "";
+    } catch {
+        console.log('filtering stuff must not be initialized yet');
+    }
 
     let cfb_games = {
         game_odds_week: `https://api.sportsdata.io/v3/cfb/odds/json/GameOddsByWeek/${selected_year}/${selected_week}?key=be6928703873487fb703ca9ce13a6bc9`,
@@ -388,6 +395,9 @@ function showGames(sport, selected_year, selected_week) {
 }
 
 function showStandings() {
+
+    document.getElementById('filtering-options').style.display = 'none';
+
     let standings_container = document.getElementById('games');
 
     let current_season = document.getElementById('season-year-select').value;
