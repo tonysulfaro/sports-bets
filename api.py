@@ -154,7 +154,7 @@ def update_user_token(username, token):
 
         # Create table if not exists
         c.execute(
-            '''CREATE TABLE if not exists `bets` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `game_id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `user_pick` TEXT NOT NULL, `bet_type` TEXT NOT NULL, `bet_value` REAL NOT NULL, `bet_investment` REAL NOT NULL )''')
+            '''CREATE TABLE if not exists `bets` ( `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE, `game_id` INTEGER NOT NULL, `user_id` INTEGER NOT NULL, `user_pick` TEXT NOT NULL, `bet_type` TEXT NOT NULL, `bet_value` TEXT NOT NULL, `bet_investment` REAL NOT NULL )''')
 
         # insert bet
         c.execute(
@@ -211,7 +211,7 @@ def add_bet_to_db(payload):
         game_id = int(payload['game_id'])
         user_pick = payload['user_pick']
         bet_type = payload['bet_type']
-        bet_value = float(payload['bet_type_value'])
+        bet_value = payload['bet_type_value']
         bet_investment = float(payload['bet_investment'])
 
 
@@ -229,7 +229,7 @@ def add_bet_to_db(payload):
         # insert bet
         c.execute(
             '''insert into bets(game_id,user_id,user_pick,bet_type,bet_value,bet_investment) values(?,?,?,?,?,?)''',
-            (game_id, 24, user_pick, bet_type, bet_value, bet_investment))
+            (game_id, user_id, user_pick, bet_type, bet_value, bet_investment))
 
         # Save (commit) the changes
         conn.commit()
