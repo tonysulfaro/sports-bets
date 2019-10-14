@@ -399,6 +399,7 @@ function showStandings() {
     document.getElementById('filtering-options').style.display = 'none';
 
     let standings_container = document.getElementById('games');
+    standings_container.innerHTML = "";
 
     let current_season = document.getElementById('season-year-select').value;
     let cfb_this_year = `https://api.sportsdata.io/v3/cfb/scores/json/Games/${current_season}?key=be6928703873487fb703ca9ce13a6bc9`;
@@ -419,9 +420,6 @@ function showStandings() {
         })
         .then(function (bet_response) {
             console.log(bet_response)
-
-            // remove children
-            standings_container.innerHTML = "";
 
             let head = `<h1>My Bets</h1>`;
             let sample_table =
