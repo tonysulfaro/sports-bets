@@ -532,7 +532,10 @@ function updateBetForm(bet_type) {
     if (bet_type == 'over-under') {
         let money_line_controls = `<div class="form-group">
                                     <label for="over-under" class="col-form-label">Over Under:</label>
-                                    <input type="number" class="form-control" id="bet-type-value">
+                                    <select class="custom-select" id="bet-type-value">
+                                        <option value="over">Over</option>
+                                        <option value="under">Under</option>
+                                    </select>
                                 </div>`;
         setBetFormItems(money_line_controls);
 
