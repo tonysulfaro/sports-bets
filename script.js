@@ -92,6 +92,19 @@ function renderButton() {
     });
 }
 
+function getGameInfo(game_id) {
+
+    fetch('https://api.sportsdata.io/v3/cfb/scores/json/Games/2019?key=be6928703873487fb703ca9ce13a6bc9')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (json_response) {
+            game = json_response.filter(game => game.GameID == game_id);
+            console.log(game);
+            return game;
+        })
+}
+
 function removeLoginScreen() {
     // only modify nav if authenticated
     if (SESSIONINFO.authenticated) {
@@ -448,11 +461,30 @@ function showStandings() {
                 let bet_type_value = bet[5];
                 let investment_amount = bet[6];
 
+                var winning_team_value = "tbd";
+
+                fetch('https://api.sportsdata.io/v3/cfb/scores/json/Games/2019?key=be6928703873487fb703ca9ce13a6bc9')
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (json_response) {
+                        game = json_response.filter(game => game.GameID == game_id);
+                        console.log(game[0].AwayTeamName);
+                        if (game[0].AwayTeamScore > game[0].HomeTeamScore) {
+                            winning_team_value = game[0].AwayTeamName;
+                            console.log(winning_team_value);
+                        } else {
+                            winning_team_value = game[0].HomeTeamName;
+                        }
+                    })
+
+                console.log(winning_team_value);
+
                 let row_template = `<tr>
                         <th scope="row">9/14/19 6:00 PM</th>
                         <td>${game_id}</td>
                         <td>${user_pick}</td>
-                        <td>{winning_team_value}</td>
+                        <td>${winning_team_value}</td>
                         <td>${bet_type}</td>
                         <td>${bet_type_value}</td>
                         <td>$${investment_amount}</td>
