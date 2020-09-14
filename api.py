@@ -492,41 +492,6 @@ def bet_actions():
         return resp
 
 
-@app.route('/sql', methods=['GET', 'POST'])
-def sql():
-    if request.method == 'GET':
-        return 'How did you find out about this secret endpoint????'
-
-    elif request.method == 'POST':
-        conn = sqlite3.connect('sports-bets.db')
-        c = conn.cursor()
-
-        content = request.json
-        print(content)
-
-        username = content['username']
-        password = content['password']
-        query = content['query']
-
-        if username == 'admin' and password == 'dogcatanotherthing':
-            c.execute(query)
-            result = c.fetchall()
-            resp = make_response(json.dumps(result), 200)
-            conn.commit()
-            conn.close()
-
-            resp.headers['Content-Type'] = 'application/json'
-            resp.headers.add('Access-Control-Allow-Origin', '*')
-            resp.headers.add('Access-Control-Allow-Headers',
-                             'Content-Type,Authorization')
-            resp.headers.add('Access-Control-Allow-Methods',
-                             'GET,PUT,POST,DELETE,OPTIONS')
-
-            return resp
-        else:
-            return make_response(json.dumps({"Message": "Unauthorized"}), 401)
-
-
 @app.after_request  # blueprint can also be app~~
 def after_request(response):
     header = response.headers
